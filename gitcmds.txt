@@ -1,0 +1,38 @@
+git add file
+git add -u
+git add -A, git add --all
+git remove
+git status
+git log
+git log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)-- %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative
+git commit -m ''
+git commit --amend
+git init
+git clone url
+git clone --bare url
+git rm
+git remote add 
+git fetch --all
+git pull
+git merge branch
+git merge --no-ff branch
+git push
+git push -u remote branch
+git push remote :branch
+git push --tags
+git ls-files
+git ls-files --other --exclude-standard	# untracked
+git clean -ndX	# list ignored
+git clean -fdx	# remove all untracked
+git clean -fd	# clean untracked without ignored
+git clean -fdX	# remove ignored only
+git archive --prefix=name/ -o name.tar.gz branch/commit
+git tag -am '' tagname branch/commit
+git grep
+.gitignore
+git config --global user.name "Your Name"
+git config --global user.email "your@mail.com"
+git config --global color.diff = auto
+git config --global color.status = auto
+git config --global color.branch = auto
+
