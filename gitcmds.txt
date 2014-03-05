@@ -11,7 +11,7 @@ git init
 git clone url
 git clone --bare url
 git rm
-git remote add 
+git remote add
 git fetch --all
 git pull
 git merge branch
@@ -23,9 +23,11 @@ git push --tags
 git ls-files
 git ls-files --other --exclude-standard	# untracked
 git clean -ndX	# list ignored
-git clean -fdx	# remove all untracked
-git clean -fd	# clean untracked without ignored
 git clean -fdX	# remove ignored only
+git clean -ndx	# list all untracked
+git clean -fdx	# remove all untracked
+git clean -fd	# list untracked and unignored ('git status' untracked files)
+git clean -fd	# clean untracked and unignored
 git archive --prefix=name/ -o name.tar.gz branch/commit
 git tag -am '' tagname branch/commit
 git grep
@@ -35,4 +37,10 @@ git config --global user.email "your@mail.com"
 git config --global color.diff = auto
 git config --global color.status = auto
 git config --global color.branch = auto
-
+git checkout -b new_branch
+git checkout branch
+git reset HEAD file	# undo git add
+git checkout -- file # discard all changes since HEAD
+git show commit/branch
+git diff filename
+git ls-tree -r HEAD

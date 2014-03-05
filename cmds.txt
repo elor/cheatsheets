@@ -1,0 +1,11 @@
+find
+rsync
+rsync -av my/dir/ my/copy
+rsync -azv remote:dir/ my/copy
+rsync --delete --exclude subdir my/dir my/copy
+xhost +x
+lsof -i4
+lsof -u user
+lsof -p pid
+lsof file
+
