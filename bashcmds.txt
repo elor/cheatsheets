@@ -1,2 +1,7 @@
 set +x
 trap read debug
+tput cols
+tput lines
+$COLUMNS
+$LINES
+
