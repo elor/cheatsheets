@@ -4,4 +4,4 @@ tput cols
 tput lines
 $COLUMNS
 $LINES
-
+IFS=$'\r\n'
