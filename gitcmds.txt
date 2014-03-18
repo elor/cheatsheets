@@ -3,6 +3,7 @@ git add -u
 git add -A, git add --all
 git remove
 git status
+git status dir/
 git log
 git log --graph --all --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(bold white)-- %an%C(reset)%C(bold yellow)%d%C(reset)' --abbrev-commit --date=relative
 git commit -m ''
@@ -14,9 +15,11 @@ git rm
 git remote add
 git fetch --all
 git pull
+git pull --ff-only
 git merge branch
 git merge --no-ff branch
 git push
+git push --all
 git push -u remote branch
 git push remote :branch
 git push --tags
@@ -30,13 +33,14 @@ git clean -fd	# list untracked and unignored ('git status' untracked files)
 git clean -fd	# clean untracked and unignored
 git archive --prefix=name/ -o name.tar.gz branch/commit
 git tag -am '' tagname branch/commit
-git grep
+git grep 'pattern'
 .gitignore
 git config --global user.name "Your Name"
 git config --global user.email "your@mail.com"
 git config --global color.diff = auto
 git config --global color.status = auto
 git config --global color.branch = auto
+git checkout ref/branch
 git checkout -b new_branch
 git checkout branch
 git reset HEAD file	# undo git add
@@ -44,3 +48,5 @@ git checkout -- file # discard all changes since HEAD
 git show commit/branch
 git diff filename
 git ls-tree -r HEAD
+git blame file
+

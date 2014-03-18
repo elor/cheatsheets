@@ -1,4 +1,5 @@
 find
+find . -xdev -type d -name '*asd.file' -maxdepth 3 -mindepth 2 -exec echo {} \;
 rsync
 rsync -av my/dir/ my/copy
 rsync -azv remote:dir/ my/copy
@@ -10,3 +11,41 @@ lsof -u user
 lsof -p pid
 lsof file
 ldd
+autoreconf -fi && configure --prefix=/custom/path/ && make && sudo make install
+date +%F
+date -r file
+sudo su username
+IFS=:;for f in $PATH;do echo $f;done
+echo $PATH | sed 's/:/\n/g'
+echo $PATH | tr : '\n'
+echo $PATH | awk '{gsub(":","\n",$1);print $1}'
+grep 'pattern' files...
+grep -v files...
+man cmd
+info cmd
+cmd --help
+mkdir -p
+ping
+mtr host
+host host/ip
+arp -v
+python -m SimpleHTTPServer 8080
+screen -S screenName
+screen -list
+screen -r ID
+watch -n interval cmd --options filename
+tail -f logfile
+readlink -f file
+dirname file
+basename file
+type cmd
+which cmd
+convert *.pdf *.png -size widthxheight
+ps ax | grep cmdname
+setxkbmap de
+sleep 1
+usleep 1000000
+du -ah
+df
+free
+df

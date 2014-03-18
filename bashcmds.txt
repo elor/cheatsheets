@@ -5,3 +5,29 @@ tput lines
 $COLUMNS
 $LINES
 IFS=$'\r\n'
+echo sim{01..22}
+[ -f "$file" ] && cat $file || echo "file $f not found" >&2
+num=0;while (( num < 10 ));do echo $num; let num++; done
+myfunc(){ echo $@;}
+myfunc(){ while true;do echo $1; shift||break;done;}
+num=10;myfunc(){ echo 'worker';sleep 3;};next(){ (( num > 0))&&let num--&&(myfunc&);};trap next CHLD;for f in {1..4};do next;done
+path="$(dirname `readlink -f "${BASH_SOURCE[0]}"`)"
+Ctrl+X Ctrl+E
+Ctrl+C
+Ctrl+I
+Ctrl+D
+Ctrl+R
+parallel(){ set -o monitor;trap next CHLD;local num=$2;local cmd=$1;next(){ (( num > 0 ))&&let num--||return;$cmd&};for i in `grep proc /proc/cpuinfo`;do next;done;wait;};parallel mycommand number
+bash -c "cmd"
+[ -z string ]
+[ -n string ]
+[ -f string ]
+[ -s file ]
+[ -e file ]
+[ -d dir ]
+[ -L link ]
+[ -r rfile ]
+[ -w wfile ]
+[ -x xfile ]
+[ -v var ]
+read line
