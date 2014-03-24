@@ -49,4 +49,6 @@ git show commit/branch
 git diff filename
 git ls-tree -r HEAD
 git blame file
-
+git rebase --onto parallelref oldref
+git remote prune origin
+git branch -rd remote/branch

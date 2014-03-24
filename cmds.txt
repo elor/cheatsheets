@@ -10,7 +10,7 @@ lsof -i4
 lsof -u user
 lsof -p pid
 lsof file
-ldd
+ldd /path/to/executable.file
 autoreconf -fi && configure --prefix=/custom/path/ && make && sudo make install
 date +%F
 date -r file
