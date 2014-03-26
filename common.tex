@@ -1,0 +1,81 @@
+\documentclass[7pt]{scrartcl}
+\usepackage{multicol}
+\usepackage{calc}
+\usepackage{ifthen}
+\usepackage[landscape]{geometry}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{tabularx}
+\usepackage{multirow}
+
+\ifthenelse{\lengthtest { \paperwidth = 11in}}
+	{ \geometry{top=.5in,left=.5in,right=.5in,bottom=.5in} }
+	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
+		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
+	}
+	
+\pagestyle{empty}
+
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%x
+                                {\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+                                {-1explus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%
+                                {\normalfont\normalsize\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {1ex plus .2ex}%
+                                {\normalfont\small\bfseries}}
+
+\makeatother
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+% Don't print section numbers
+\setcounter{secnumdepth}{0}
+
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.5ex}
+
+\setlength{\premulticols}{1pt}
+\setlength{\postmulticols}{1pt}
+\setlength{\multicolsep}{1pt}
+\setlength{\columnsep}{2pt}
+
+\raggedright
+\footnotesize
+
+\definecolor{Gray}{gray}{0.85}
+\definecolor{Red}{rgb}{1.0 0.7 0.7}
+\newcolumntype{g}{>{\columncolor{Gray}}l}
+\newcolumntype{a}{>{\columncolor{Red}}l}
+\newcolumntype{A}{>{\columncolor{Red}}X}
+\newcolumntype{G}{>{\columncolor{Gray}}X}
+
+\newcommand{\mytable}[2]{\begin{tabularx}{0.33\textwidth}{|#1|}\hline #2 \hline\end{tabularx}}
+\newcommand{\specialcell}[2][l]{\begin{tabular}[#1]{@{}l@{}}#2\end{tabular}}
+\newcommand{\sct}[1]{\specialcell[t]{#1}}
+%\newcommand*{\thead}[1]{\multicolumn{1}{c}{\bfseries #1}}
+\newcommand{\thead}[1]{\textbf{#1}}
+
+\newcommand{\myopt}[1]{\hspace{3ex}\myoptc{#1}}
+\newcommand{\myoptc}[1]{\texttt{#1}}
+\newcommand{\myoptd}[1]{\hspace{3ex}\fontsize{6pt}{6pt}\selectfont #1}
+\newcommand{\code}[1]{\texttt{\textbf{#1}}}
+
+\newcommand{\attention}[1]{\multicolumn{1}{|a}{#1}}
+
+\newcommand{\commit}[0]{\textit{commit}}
+\newcommand{\branch}[0]{\textit{branch}}
+\newcommand{\rbranch}[0]{\textit{rbranch}}
+\newcommand{\file}[0]{\textit{file}}
+\newcommand{\dir}[0]{\textit{dir}}
+\newcommand{\tag}[0]{\textit{tag}}
+\newcommand{\remote}[0]{\textit{remote}}
+\newcommand{\url}[0]{\textit{url}}

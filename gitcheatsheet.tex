@@ -1,69 +1,175 @@
-\documentclass[10pt,landscape]{article}
-\usepackage{multicol}
-\usepackage{calc}
-\usepackage{ifthen}
-\usepackage[landscape]{geometry}
-
-\ifthenelse{\lengthtest { \paperwidth = 11in}}
-	{ \geometry{top=.5in,left=.5in,right=.5in,bottom=.5in} }
-	{\ifthenelse{ \lengthtest{ \paperwidth = 297mm}}
-		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
-		{\geometry{top=1cm,left=1cm,right=1cm,bottom=1cm} }
-	}
-	
-\pagestyle{empty}
-
-\makeatletter
-\renewcommand{\section}{\@startsection{section}{1}{0mm}%
-                                {-1ex plus -.5ex minus -.2ex}%
-                                {0.5ex plus .2ex}%x
-                                {\normalfont\large\bfseries}}
-\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
-                                {-1explus -.5ex minus -.2ex}%
-                                {0.5ex plus .2ex}%
-                                {\normalfont\normalsize\bfseries}}
-\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
-                                {-1ex plus -.5ex minus -.2ex}%
-                                {1ex plus .2ex}%
-                                {\normalfont\small\bfseries}}
-
-\makeatother
-
-\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
-    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
-
-% Don't print section numbers
-\setcounter{secnumdepth}{0}
-
-
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{0pt plus 0.5ex}
+\include{common}
 
 \begin{document}
-
-\raggedright
-\footnotesize
-\begin{multicols}{3}
-
-\setlength{\premulticols}{1pt}
-\setlength{\postmulticols}{1pt}
-\setlength{\multicolsep}{1pt}
-\setlength{\columnsep}{2pt}
 
 \begin{center}
 	\Large{\textbf{Git Cheat Sheet}}
 \end{center}
 
-\section{Basic}
-\begin{tabular}{@{}ll@{}}
-\verb!book!		& Asd	\\
-\verb!report!	& Dsa	\\
-\verb!article!	& 5	\\
-\verb!letter!	& asd	\\
-\verb!slides!	& dsa	\\
-\end{tabular}
+\begin{multicols}{3}
 
-ASD
+\section{List of Commands}
+\mytable{gX}{
+	\code{git help}	&	show commonly used commands	\\
+	\code{git help -a}	&	show all commands	\\
+	\code{git \textit{command} --help}	&	Show help for a specific command	\\
+}
+
+\section{Git Files and Directories}
+\mytable{gX}{
+$\sim$/.gitconfig	&	global git configuration. See \texttt{git config --global}	\\
+	./.git/	&	internal git data	\\
+	./.git/config	&	local git configuration		\\
+	.gitignore	&	list of patterns and relative paths to ignore in its directory	\\
+}
+
+\section{Aliases}
+TODO: change title
+\mytable{gXg}{
+	\thead{alias}	&	\thead{description}	&	\thead{examples}	\\
+	\textit{repo}	&	directory containing .git/ &	$\sim$/code/project	\\
+	\commit{}	&	set of file changes relative to a previous commit	&	c03aa34b...\\
+	\branch{}	&	reference to a commit. Automatically updated by \code{git commit}	&	\sct{master\\devel\\remote{}s/origin/master}	\\
+	\file{}	&	file within the working copy	&	\sct{README\\src/main.cpp}	\\
+	\dir{}	&	directory within working copy	&	src/	\\
+	\tag{}	&	fixed reference to a commit	&	v1.0	\\
+	\remote{}	&	alias for a remote url	&	\sct{origin\\github}	\\
+	\url{}	&	address of a remote git repository. Can be read-only (http) or read-write	&	\sct{http://github.com/user/project\\gitolite@sim:project\\/mnt/tmp/project.git}	\\
+	\rbranch{}	&	remote branch	&	\code{remote/\textit{remote}/\branch{}}	\\
+	\code{HEAD}	&	reference to current commit	&	\\
+	\code{HEAD\^{}}	&	reference to last commit	&	\\
+}
+
+\section{Setup of Global Configuration}
+\mytable{gX}{
+	\specialcell{\code{git config --global user.name "}\textit{Your Name}\code{"}	\\
+	\code{git config --global user.email "}\textit{your@mail.com}\code{"}}
+		&	user settings	\\
+	\code{git config --global color.ui true}	&	terminal colors	\\
+}
+\\
+Bonus: \code{git graph} alias:
+\\
+\mytable{G}{
+\code{git config --global alias.graph "log --graph --all --format=format:'\%C(bold blue)\%h\%C(reset) - \%C(bold green)(\%ar)\%C(reset) \%C(white)\%s\%C(reset) \%C(bold white)-- \%an\%C(reset)\%C(bold yellow)\%d\%C(reset)' --abbrev-commit --date=relative"}	\\
+}
+
+\section{Initialization}
+\mytable{gX}{
+	\code{git init}	&	create a git repository in the current directory\\
+	\code{git clone} \url{}	&	clone a remote repository into a new folder	\\
+	\myopt{--bare}	&	\myoptd{without working copy}	\\
+	\myopt{--depth} \textit{num}	&	\myoptd{shallow clone: omits older commits}	\\
+}
+
+\section{Showing and Saving Changes}
+\mytable{gX}{
+	\code{git status}	&	show staged, unstaged and new files	\\
+	\code{git status} \textit{dir/file}	&	show status of a subset of files	\\
+	\code{git diff}	&	show all changed lines since last commit	\\
+	\code{git diff} \file{}	&	show \code{diff} for \file{} only	\\
+	\code{git add} \file{}	&	stage \file{} for the next commit	\\
+	\code{git add -u}	&	stage all unstaged files (modifications and deletions)	\\
+	\code{git add --all}	&	stage all existing files (modifications and new files)	\\
+	\code{git add -A}	&	alias for \code{git add --all}	\\
+	\code{git rm} \file{}	&	remove a file from the repository and delete it	\\
+	\code{git commit}	&	commit all staged files to the current branch	\\
+	\myopt{-m '}\textit{commit message}\myoptc{'}	&	\myoptd{pass the commit message in-line}	\\
+	\attention{\myopt{--amend}}	&	\myoptd{add changes to last commit}	\\
+}
+
+\section{Branching}
+\mytable{gX}{
+	\code{git branch}	&	show current branch	\\
+	\code{git branch -a}	&	show all branches	\\
+	\code{git checkout} \branch{}	&	set local files to \branch{}	\\
+	\code{git branch} \textit{newbranch}	&	create a new branch at the current commit	\\
+	\code{git checkout -b} \textit{newbranch}	&	create a new branch and check it out	\\
+	\code{git merge} \branch{}	&	merge changes from a parallel branch	\\
+	\myopt{--no-ff}	&	force a new commit for a cleaner merge history	\\
+	\myopt{--ff-only}	&	don't merge if both branches were changed	\\
+	\code{git branch -d} \branch{}	&	delete a merged local branch	\\
+	\attention{\code{git branch -D}	\branch{}}	&	force deletion of a local branch	\\
+}
+
+\section{Remotes}
+\mytable{gX}{
+	\code{git clone} \url{}	&	automatically sets the remote \code{origin} to \url{}	\\
+	\code{git remote -v}	&	show all remotes and addresses	\\
+	\code{git remote add} \remote{} \url{}	&	create a new remote	\\
+	\code{git remote rm} \remote{}	&	delete a remote	\\
+	\code{git fetch} \remote{}	&	fetch all branches from \remote{} without merging	\\
+	\code{git fetch --all}	&	fetch from all remotes without merging	\\
+	\code{git pull} \remote{} \branch{}	&	\code{fetch} and \code{merge} a remote branch	\\
+	\myopt{--ff-only}	&	\myoptd{Only merge if there's no file conflict}	\\
+	\code{git push} \remote{} \branch{}	&	upload local changes to \remote{}	\\
+	\attention{\code{git push} \remote{} \code{:}\branch{}}	&	remotely delete \branch{} on \remote{}	\\
+	\code{git remote prune} \remote{}	&	delete references to deleted remote branches \\
+}
+
+\section{Upstream}
+\mytable{gX}{
+	\code{git push -u} \remote{} \branch{}	&	set upstream and push to \remote{} \branch{}	\\
+	\code{git pull}	&	pull current branch from upstream	\\
+	\code{git push}	&	push current branch to upstream	\\
+	\code{git push --all}	&	push all branches to their upstream	\\
+	\multicolumn{2}{|g|}{\code{git branch --set-upstream-to=}remotes/\remote{}/\branch{}}\\
+		&	set upstream of the current branch	\\
+}
+
+\section{Tags}
+\mytable{gX}{
+	\code{git tag -a }\tag{} \commit{}|\branch{}	&	create a tag at \commit{} or \branch{}	\\
+	\myopt{-m '}\textit{tag message}\code{'}	&	\myoptd{pass the tag message in-line}	\\
+	\code{git tag -d }\tag{}	&	delete \tag{}	\\
+	\code{git push --tags}	&	push all tags	\\
+	\code{git push} \remote{} \code{:refs/tags/}\tag{}	&	delete a remote tag	\\
+}
+
+\section{Files Searches}
+\mytable{gX}{
+	\code{git grep '}\textit{pattern}\code{'}	&	search all tracked files for \textit{pattern}	\\
+	\code{git ls-files}	&	list tracked files	\\
+	\myopt{--other --exclude-standard}	&	list untracked files \\
+	\code{git clean -ndx}	&	list untracked and ignored files\\
+	\code{git clean -ndX}	&	list ignored files	\\
+}
+
+\section{Cleaning}
+\mytable{gX}{
+	\code{git clean -f}	&	delete untracked files	\\
+	\code{git clean -fd}	&	delete untracked files and directories	\\
+	\code{git clean -fdX}	&	delete ignored files only	\\
+	\code{git clean -fdx}	&	delete untracked and ignored files	\\
+	\multicolumn{2}{|g|}{\code{git archive --prefix=}\textit{project}\code{/ -o }\textit{project}\code{.tar.gz} \branch{}}	\\
+	&	create a tar.gz archive of all tracked files	\\
+}
+
+\section{Commit History}
+\mytable{gX}{
+	\code{git log}	&	show local commit history	\\
+	\code{git graph}	&	pseudo-graphical commit history. See \textbf{Setup}	\\
+	\code{git ls-tree -r HEAD}	&	show modification commit for each file	\\
+	\code{git show \commit{}}	&	\code{diff} of the given \commit{} to its parent	\\
+	\code{git blame} \file{}	&	show the modification commit for each line \\
+}
+
+\section{Undo}
+\mytable{gX}{
+	\attention{\code{git reset HEAD \file{}}}	&	undo \code{git add} of a single file	\\
+	\attention{\code{git reset --hard}}	&	undo everything since last commit	\\
+	\attention{\code{git checkout --} \file{}}	&	undo changes to \file{} since last commit	\\
+	\attention{\code{git rebase --onto} \textit{branch} \commit{}}	&	undo \code{git branch} by moving commits on top of the old branch	\\
+	\attention{\code{git push} \remote{} \commit{}:\branch{}}	&	revert \remote{}/\branch{} to \commit{}	\\
+}
+\\
+Accidentally committed a password file? Delete any copy or reference of it on the current branch:
+\mytable{a}{
+	\code{git filter-branch --force --index-filter 'git rm --cached}
+	\\
+	\code{--ignore-unmatch} \file{} \code{' --prune-empty --tag-name-filter cat -- --all}
+	\\
+}
 
 \end{multicols}
 
