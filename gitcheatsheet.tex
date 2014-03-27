@@ -2,45 +2,60 @@
 
 \begin{document}
 
+\begin{multicols*}{3}
+
 \begin{center}
-	\Large{\textbf{Git Cheat Sheet}}
+	\LARGE{\textbf{Git Cheat Sheet}}\\
+	\large{\reflectbox{\textcopyright} Erik E. Lorenz, \today}
 \end{center}
 
-\begin{multicols}{3}
 
-\section{List of Commands}
+\section{Help}
 \mytable{gX}{
 	\code{git help}	&	show commonly used commands	\\
 	\code{git help -a}	&	show all commands	\\
-	\code{git \textit{command} --help}	&	Show help for a specific command	\\
+	\code{git} \textit{command} \code{--help}	&	show help for a specific command	\\
 }
 
-\section{Git Files and Directories}
+\section{Internal Files and Directories}
 \mytable{gX}{
-$\sim$/.gitconfig	&	global git configuration. See \texttt{git config --global}	\\
-	./.git/	&	internal git data	\\
-	./.git/config	&	local git configuration		\\
-	.gitignore	&	list of patterns and relative paths to ignore in its directory	\\
+	\code{$\sim$/.gitconfig}	&	global git configuration. See \texttt{git config --global}	\\
+	\code{./.git/}	&	internal git data	\\
+	\code{./.git/config}	&	local git configuration		\\
+	\code{.gitignore}	&	list of patterns and relative paths to ignore in \repo{}\\
 }
 
-\section{Aliases}
-TODO: change title
+\section{Terms}
 \mytable{gXg}{
-	\thead{alias}	&	\thead{description}	&	\thead{examples}	\\
-	\textit{repo}	&	directory containing .git/ &	$\sim$/code/project	\\
-	\commit{}	&	set of file changes relative to a previous commit	&	c03aa34b...\\
+	\thead{term}	&	\thead{description}	&	\thead{examples}	\\
+	\repo{}	&	project dir. Contains \code{.git/} &	$\sim$/code/project	\\
+	\commit{}	&	set of changes relative to previous commit	&	c03aa34b...\\
 	\branch{}	&	reference to a commit. Automatically updated by \code{git commit}	&	\sct{master\\devel\\remote{}s/origin/master}	\\
-	\file{}	&	file within the working copy	&	\sct{README\\src/main.cpp}	\\
-	\dir{}	&	directory within working copy	&	src/	\\
+	\file{}	&	regular file within \repo{}	&	\sct{README\\src/main.cpp}	\\
+	\dir{}	&	regular subdirectory of \repo{}	&	src/	\\
 	\tag{}	&	fixed reference to a commit	&	v1.0	\\
 	\remote{}	&	alias for a remote url	&	\sct{origin\\github}	\\
-	\url{}	&	address of a remote git repository. Can be read-only (http) or read-write	&	\sct{http://github.com/user/project\\gitolite@sim:project\\/mnt/tmp/project.git}	\\
-	\rbranch{}	&	remote branch	&	\code{remote/\textit{remote}/\branch{}}	\\
-	\code{HEAD}	&	reference to current commit	&	\\
-	\code{HEAD\^{}}	&	reference to last commit	&	\\
+	\url{}	&	address of a remote git repository. Can be read-only (http) or read-write	&	\sct{http://github.com/usr/proj\\gitolite@sim:project\\/mnt/tmp/project.git}	\\
+%	\rbranch{}	&	reference to remote branch	&	\code{remote/\textit{remote}/\branch{}}	\\
+}
+\mytable{gX} {
+	\code{HEAD}	&	reference to current \commit{}	\\
+	\code{HEAD\^{}}	&	reference to last \commit{}		\\
+	unstaged file	&	a file which hasn't been added to the next commit	\\
+	staged file	&	a file which has been added to the next commit	\\
+	tracked file	&	a file which has been previously committed	\\
+	untracked file	&	a file which hasn't been tracked during the last commit	\\
+	new file	&	a previously untracked file	\\
+	ignored file	&	a file which won't be tracked or staged. see \code{.gitignore}	\\
 }
 
-\section{Setup of Global Configuration}
+\section{Cheat Sheet Color Coding}
+\mytable{gX}{
+	\code{cmd}	&	Usually not harmful. Changes local references only.	\\
+	\attention{\code{cmd}}	&	Rewrites history, permanently deletes data or annoys others	\\
+}
+
+\section{Global Setup}
 \mytable{gX}{
 	\specialcell{\code{git config --global user.name "}\textit{Your Name}\code{"}	\\
 	\code{git config --global user.email "}\textit{your@mail.com}\code{"}}
@@ -48,94 +63,143 @@ TODO: change title
 	\code{git config --global color.ui true}	&	terminal colors	\\
 }
 \\
-Bonus: \code{git graph} alias:
+\vspace{1em}
+Bonus: add the \code{git graph} alias:
 \\
 \mytable{G}{
 \code{git config --global alias.graph "log --graph --all --format=format:'\%C(bold blue)\%h\%C(reset) - \%C(bold green)(\%ar)\%C(reset) \%C(white)\%s\%C(reset) \%C(bold white)-- \%an\%C(reset)\%C(bold yellow)\%d\%C(reset)' --abbrev-commit --date=relative"}	\\
 }
 
-\section{Initialization}
+\section{Repository Initialization}
 \mytable{gX}{
-	\code{git init}	&	create a git repository in the current directory\\
-	\code{git clone} \url{}	&	clone a remote repository into a new folder	\\
+	\code{git init} \dir	&	create \dir{} as a git repository	\\
+	\code{git init}	&	convert the current directory to a git repository	\\
+	\code{git clone} \url{}	&	clone a remote repository into a new directory	\\
 	\myopt{--bare}	&	\myoptd{without working copy}	\\
 	\myopt{--depth} \textit{num}	&	\myoptd{shallow clone: omits older commits}	\\
 }
 
-\section{Showing and Saving Changes}
+\section{Workflow Examples}
+\mytable{gX}{
+	\sct{
+		\code{cd} \dir{}\\
+		\code{git init}\\
+		\code{git add .}\\
+		\code{git commit -m 'initial commit'}\\
+	}	&	
+	creation of a new repository
+	\\\hline
+	\sct{
+		\code{git checkout -b feature-}\textit{asd}\\
+		(file editing)\\
+		\code{git add .}\\
+		\code{git commit -m 'feature }\textit{asd} \code{implemented'}\\
+	}	&
+	usual workflow when writing new features or fixing bugs
+	\\\hline
+	\sct{
+		\code{git checkout master}\\
+		\code{git merge --no-ff feature-}\textit{asd}\\
+		\code{git branch -d feature-}\textit{asd}\\
+		\code{git push origin master}\\
+	}	&
+	updating the master branch after a feature has been successfully implemented.
+	\\
+}
+
+\section{Managing Local Changes}
 \mytable{gX}{
 	\code{git status}	&	show staged, unstaged and new files	\\
-	\code{git status} \textit{dir/file}	&	show status of a subset of files	\\
+	\code{git status} \dir{}\textbar\file{}	&	show status of a subset of files	\\
 	\code{git diff}	&	show all changed lines since last commit	\\
 	\code{git diff} \file{}	&	show \code{diff} for \file{} only	\\
-	\code{git add} \file{}	&	stage \file{} for the next commit	\\
-	\code{git add -u}	&	stage all unstaged files (modifications and deletions)	\\
-	\code{git add --all}	&	stage all existing files (modifications and new files)	\\
+	\code{git diff} \file{} \commit{}	&	show changes since \commit{}	\\
+	\code{git add} \dir{}\textbar\file{}	&	stage \dir{} or \file{} for the next commit	\\
+	\code{git add -u}	&	stage all tracked files	\\
+	\code{git add --all}	&	stage all existing files, including new files	\\
 	\code{git add -A}	&	alias for \code{git add --all}	\\
-	\code{git rm} \file{}	&	remove a file from the repository and delete it	\\
-	\code{git commit}	&	commit all staged files to the current branch	\\
+	\code{git stage}	&	alias for \code{git add}	\\
+	\code{git rm} \file{}	&	delete \file{} and stage its deletion	\\
+	\code{git mv} \textit{file... \textit{target}}	&	move and stage one or more files	\\
+	\code{git commit}	&	bundle staged changes int a new \commit{}	\\
 	\myopt{-m '}\textit{commit message}\myoptc{'}	&	\myoptd{pass the commit message in-line}	\\
 	\attention{\myopt{--amend}}	&	\myoptd{add changes to last commit}	\\
 }
 
-\section{Branching}
+\section{Managing Local Branches}
 \mytable{gX}{
 	\code{git branch}	&	show current branch	\\
 	\code{git branch -a}	&	show all branches	\\
-	\code{git checkout} \branch{}	&	set local files to \branch{}	\\
-	\code{git branch} \textit{newbranch}	&	create a new branch at the current commit	\\
-	\code{git checkout -b} \textit{newbranch}	&	create a new branch and check it out	\\
-	\code{git merge} \branch{}	&	merge changes from a parallel branch	\\
-	\myopt{--no-ff}	&	force a new commit for a cleaner merge history	\\
+	\code{git checkout} \branch{}	&	reset files to \branch{}	\\
+	\code{git branch} \branch{}	&	create a new branch at the current commit	\\
+	\code{git checkout -b} \branch{}	&	create a new branch and check it out	\\
+	\code{git merge} \branch{}	&	merge changes from another branch	\\
+	\myopt{--no-ff}	&	force a new commit (cleaner merge history)	\\
 	\myopt{--ff-only}	&	don't merge if both branches were changed	\\
 	\code{git branch -d} \branch{}	&	delete a merged local branch	\\
 	\attention{\code{git branch -D}	\branch{}}	&	force deletion of a local branch	\\
 }
 
-\section{Remotes}
+\section{Stashes}
 \mytable{gX}{
-	\code{git clone} \url{}	&	automatically sets the remote \code{origin} to \url{}	\\
+	\code{git stash save}	&	save all changes in a stash and reset to last commit	\\
+	\code{git stash list}	&	list all stashes	\\
+	\code{git stash show}	&	show which files were changed	\\
+	\code{git stash pop}	&	remove and apply stash (e.g. to a different branch)	\\
+}
+
+\section{Remote Repositories}
+\mytable{gX}{
+	\code{git clone} \url{}	&	creates the remote \code{origin} during \code{init}	\\
 	\code{git remote -v}	&	show all remotes and addresses	\\
 	\code{git remote add} \remote{} \url{}	&	create a new remote	\\
 	\code{git remote rm} \remote{}	&	delete a remote	\\
-	\code{git fetch} \remote{}	&	fetch all branches from \remote{} without merging	\\
+	\code{git fetch} \remote{}	&	fetch all branches without merging	\\
 	\code{git fetch --all}	&	fetch from all remotes without merging	\\
 	\code{git pull} \remote{} \branch{}	&	\code{fetch} and \code{merge} a remote branch	\\
 	\myopt{--ff-only}	&	\myoptd{Only merge if there's no file conflict}	\\
-	\code{git push} \remote{} \branch{}	&	upload local changes to \remote{}	\\
-	\attention{\code{git push} \remote{} \code{:}\branch{}}	&	remotely delete \branch{} on \remote{}	\\
-	\code{git remote prune} \remote{}	&	delete references to deleted remote branches \\
+	\code{git push} \remote{} \branch{}	&	upload local commits to \remote{}	\\
+	\attention{\code{git push} \remote{} \code{:}\branch{}}	&	delete \branch{} on \remote{}	\\
+	\code{git remote prune} \remote{}	&	delete invalid refs to remote branches \\
 }
 
-\section{Upstream}
+\section{Upstreams}
+
+%%%%%%% DIRTY HACK AHEAD %%%%%%%
+\vspace{0.81ex}
+%%%%%%% DIRTY HACK END %%%%%%%
+
 \mytable{gX}{
 	\code{git push -u} \remote{} \branch{}	&	set upstream and push to \remote{} \branch{}	\\
 	\code{git pull}	&	pull current branch from upstream	\\
 	\code{git push}	&	push current branch to upstream	\\
 	\code{git push --all}	&	push all branches to their upstream	\\
-	\multicolumn{2}{|g|}{\code{git branch --set-upstream-to=}remotes/\remote{}/\branch{}}\\
+	\multicolumn{2}{|g|}{\code{git branch --set-upstream-to=}\remote{}\code{/}\branch{}}\\
 		&	set upstream of the current branch	\\
 }
 
-\section{Tags}
+\section{Managing Tags}
 \mytable{gX}{
-	\code{git tag -a }\tag{} \commit{}|\branch{}	&	create a tag at \commit{} or \branch{}	\\
+	\code{git tag -a }\tag{} \commit{}\textbar\branch{}	&	create a tag at \commit{} or \branch{}	\\
 	\myopt{-m '}\textit{tag message}\code{'}	&	\myoptd{pass the tag message in-line}	\\
-	\code{git tag -d }\tag{}	&	delete \tag{}	\\
+	\code{git tag -d }\tag{}	&	delete \tag{} locally	\\
 	\code{git push --tags}	&	push all tags	\\
 	\code{git push} \remote{} \code{:refs/tags/}\tag{}	&	delete a remote tag	\\
 }
 
-\section{Files Searches}
+\section{Searching for Files}
 \mytable{gX}{
 	\code{git grep '}\textit{pattern}\code{'}	&	search all tracked files for \textit{pattern}	\\
 	\code{git ls-files}	&	list tracked files	\\
-	\myopt{--other --exclude-standard}	&	list untracked files \\
-	\code{git clean -ndx}	&	list untracked and ignored files\\
+	\myopt{-d}	&	\myoptd{list deleted files}	\\
+	\myopt{-m}	&	\myoptd{list modified files}	\\
+	\myopt{-u}	&	\myoptd{on merge conflict, list unmerged files}	\\
+	\myopt{--other --exclude-standard}	&	\myoptd{list untracked files} \\
+	\code{git clean -ndx}	&	list untracked and ignored files	\\
 	\code{git clean -ndX}	&	list ignored files	\\
 }
 
-\section{Cleaning}
+\section{Working Directory Cleanup}
 \mytable{gX}{
 	\code{git clean -f}	&	delete untracked files	\\
 	\code{git clean -fd}	&	delete untracked files and directories	\\
@@ -154,15 +218,17 @@ Bonus: \code{git graph} alias:
 	\code{git blame} \file{}	&	show the modification commit for each line \\
 }
 
-\section{Undo}
+\section{Undo Bad Things \texttrademark}
 \mytable{gX}{
 	\attention{\code{git reset HEAD \file{}}}	&	undo \code{git add} of a single file	\\
 	\attention{\code{git reset --hard}}	&	undo everything since last commit	\\
-	\attention{\code{git checkout --} \file{}}	&	undo changes to \file{} since last commit	\\
-	\attention{\code{git rebase --onto} \textit{branch} \commit{}}	&	undo \code{git branch} by moving commits on top of the old branch	\\
-	\attention{\code{git push} \remote{} \commit{}:\branch{}}	&	revert \remote{}/\branch{} to \commit{}	\\
+	\attention{\code{git checkout --} \file{}}	&	undo \file{} changes since last commit	\\
+	\attention{\sct{\code{git rebase} \\ \myopt{--onto} \branch{} \commit{}}}	&	undo \code{git branch} by moving commits on top of the old branch	\\
+	\attention{\code{git push} \remote{} \commit{}:\branch{}}	&	revert remote branch to \commit{}	\\
+	\attention{\code{rm -rfv} \repo{}\code{/.git*}}	&	undo \code{git init}	\\
 }
 \\
+\vspace{1em}
 Accidentally committed a password file? Delete any copy or reference of it on the current branch:
 \mytable{a}{
 	\code{git filter-branch --force --index-filter 'git rm --cached}
@@ -171,6 +237,21 @@ Accidentally committed a password file? Delete any copy or reference of it on th
 	\\
 }
 
-\end{multicols}
+
+
+\section{Further Reading}
+
+\begin{tabularx}{0.33\textwidth}{X}
+\textbf{A successful Git branching model}\\
+http://nvie.com/posts/a-successful-git-branching-model/
+\\
+\textbf{AlBlue's Git Tip of the Week}\\
+http://alblue.bandlem.com/Tag/gtotw/
+\\
+\textbf{git Documentation}\\
+http://git-scm.com/doc
+\end{tabularx}
+
+\end{multicols*}
 
 \end{document}

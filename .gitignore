@@ -1,5 +1,5 @@
 *.aux
 *.tar.gz
 *.log
-*.pdf
 *.synctex.gz
+*.out
