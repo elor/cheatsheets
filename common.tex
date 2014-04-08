@@ -45,10 +45,13 @@
 
 \definecolor{Gray}{gray}{0.85}
 \definecolor{Red}{rgb}{1.0 0.7 0.7}
+\definecolor{Green}{rgb}{0.7 1.0 0.7}
 \newcolumntype{g}{>{\columncolor{Gray}}l}
+\newcolumntype{G}{>{\columncolor{Gray}}X}
 \newcolumntype{a}{>{\columncolor{Red}}l}
 \newcolumntype{A}{>{\columncolor{Red}}X}
-\newcolumntype{G}{>{\columncolor{Gray}}X}
+\newcolumntype{i}{>{\columncolor{Green}}l}
+\newcolumntype{I}{>{\columncolor{Green}}X}
 
 \newcommand{\mytable}[2]{\begin{tabularx}{0.33\textwidth}{|#1|}\hline #2 \hline\end{tabularx}}
 \newcommand{\specialcell}[2][l]{\begin{tabular}[#1]{@{}l@{}}#2\end{tabular}}
@@ -62,6 +65,7 @@
 \newcommand{\code}[1]{\texttt{\textbf{#1}}}
 
 \newcommand{\attention}[1]{\multicolumn{1}{|a}{#1}}
+\newcommand{\important}[1]{\multicolumn{1}{|i}{#1}}
 
 \newcommand{\repo}[0]{\textit{repo}}
 \newcommand{\commit}[0]{\textit{commit}}

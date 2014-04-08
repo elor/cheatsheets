@@ -1,3 +1,0 @@
-git mergetool
-git submodules
-git add -i
