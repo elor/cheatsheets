@@ -40,7 +40,7 @@ dirname file
 basename file
 type cmd
 which cmd
-convert *.pdf *.png -size widthxheight
+convert -flatten -density 300 *.pdf *.png
 ps ax | grep cmdname
 setxkbmap de
 sleep 1
