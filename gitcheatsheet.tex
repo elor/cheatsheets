@@ -29,8 +29,8 @@
 \mytable{iXi}{
 	\thead{term}	&	\thead{description}	&	\thead{examples}	\\
 	\repo{}	&	project dir. Contains \code{.git/} &	$\sim$/code/project	\\
-	\commit{}	&	set of changes relative to previous commit	&	c03aa34b...\\
-	\branch{}	&	reference to a commit. Automatically updated by \code{git commit}	&	\sct{master\\devel\\remote{}s/origin/master}	\\
+	\commit{}	&	set of changes relative to its parent commit(s)	&	c03aa34b...\\
+	\branch{}	&	series of commits. References the latest commit. Updated on \code{git commit}	&	\sct{master\\devel\\remote{}s/origin/master}	\\
 	\file{}	&	regular file within \repo{}	&	\sct{README\\src/main.cpp}	\\
 	\dir{}	&	regular subdirectory of \repo{}	&	src/	\\
 	\tag{}	&	fixed reference to a commit	&	v1.0	\\
@@ -41,6 +41,7 @@
 \mytable{iX} {
 	\code{HEAD}	&	reference to current \commit{}	\\
 	\code{HEAD\^{}}	&	reference to last \commit{}		\\
+	\code{index}	&	where changes are stored prior to a commit	\\
 	unstaged file	&	a file which hasn't been added to the next commit	\\
 	staged file	&	a file which has been added to the next commit	\\
 	tracked file	&	a file which has been previously committed	\\
@@ -51,7 +52,7 @@
 
 \section{Cheat Sheet Color Coding}
 \mytable{gX}{
-	\important{\code{cmd}}	&	Important for beginners	\\
+	\important{\code{cmd}}	&	Most frequent commands	\\
 	\code{cmd}	&	Usually not harmful: Changes local references only	\\
 	\attention{\code{cmd}}	&	Rewrites history, permanently deletes data or annoys others	\\
 }
@@ -88,7 +89,7 @@ Bonus: add the \code{git graph} alias:
 		\code{git add .}\\
 		\code{git commit -m 'initial commit'}\\
 	}	&	
-	creation of a new repository
+	setup of a new repository
 	\\\hline
 	\sct{
 		(file editing)\\
@@ -103,13 +104,13 @@ Bonus: add the \code{git graph} alias:
 		\code{git branch -d feature-}\textit{asd}\\
 		\code{git push origin master}\\
 	}	&
-	updating the master branch with changes from a feature branch before deleting it
+	update of the master branch with changes from a feature branch before deleting it
 	\\
 }
 
 \section{Managing Local Changes}
 \mytable{gX}{
-	\code{git status}	&	show staged, unstaged and new files	\\
+	\important{\code{git status}}	&	show changed files since last commit	\\
 	\code{git status} \dir{}\textbar\file{}	&	show status of a subset of files	\\
 	\code{git diff}	&	show all changed lines since last commit	\\
 	\code{git diff} \file{}	&	show \code{diff} for \file{} only	\\
@@ -131,12 +132,12 @@ Bonus: add the \code{git graph} alias:
 \mytable{gX}{
 	\code{git branch}	&	show current branch	\\
 	\code{git branch -a}	&	show all branches	\\
-	\code{git checkout} \branch{}	&	reset files to \branch{}	\\
+	\code{git checkout} \branch{}	&	move to \branch{}	\\
 	\code{git branch} \branch{}	&	create a new branch at the current commit	\\
-	\code{git checkout -b} \branch{}	&	create a new branch and check it out	\\
+	\code{git checkout -b} \branch{}	&	create a new branch and move to it	\\
 	\code{git merge} \branch{}	&	merge changes from another branch	\\
-	\myopt{--no-ff}	&	force a new commit (cleaner merge history)	\\
-	\myopt{--ff-only}	&	don't merge if both branches were changed	\\
+	\myopt{--no-ff}	&	\myoptd{force a new commit (cleaner merge history)}	\\
+	\myopt{--ff-only}	&	\myoptd{don't merge if both branches were changed}	\\
 	\code{git mergetool}	&	starts a program to help with merge conflicts	\\
 	\code{git branch -d} \branch{}	&	delete a merged local branch	\\
 	\attention{\code{git branch -D}	\branch{}}	&	force deletion of a local branch	\\
@@ -144,20 +145,20 @@ Bonus: add the \code{git graph} alias:
 
 \section{Stashes}
 \mytable{gX}{
-	\code{git stash save}	&	save all changes in a stash and reset to last commit	\\
+	\code{git stash save}	&	detach all changes since the last commit to a stash	\\
 	\code{git stash list}	&	list all stashes	\\
 	\code{git stash show}	&	show which files were changed	\\
-	\code{git stash pop}	&	remove and apply stash (e.g. to a different branch)	\\
+	\code{git stash pop}	&	remove and apply a stash (e.g. to a different branch)	\\
 }
 
 \section{Remote Repositories}
 \mytable{gX}{
-	\code{git clone} \url{}	&	creates the remote \code{origin} during \code{init}	\\
+	\code{git clone} \url{}	&	automatically creates the remote \code{origin}	\\
 	\code{git remote -v}	&	show all remotes and addresses	\\
-	\code{git remote add} \remote{} \url{}	&	create a new remote	\\
-	\code{git remote rm} \remote{}	&	delete a remote	\\
-	\code{git fetch} \remote{}	&	fetch all branches without merging	\\
-	\code{git fetch --all}	&	fetch from all remotes without merging	\\
+	\code{git remote add} \remote{} \url{}	&	add a new remote	\\
+	\code{git remote rm} \remote{}	&	remove a remote	\\
+	\code{git fetch} \remote{}	&	download all \remote{} branches w/o \code{merge}	\\
+	\code{git fetch --all}	&	\code{fetch} from all remotes	\\
 	\code{git pull} \remote{} \branch{}	&	\code{fetch} and \code{merge} a remote branch	\\
 	\myopt{--ff-only}	&	\myoptd{Only merge if there's no file conflict}	\\
 	\code{git push} \remote{} \branch{}	&	upload local commits to \remote{}	\\
@@ -173,9 +174,9 @@ Bonus: add the \code{git graph} alias:
 
 \mytable{gX}{
 	\code{git push -u} \remote{} \branch{}	&	set upstream and push to \remote{} \branch{}	\\
-	\code{git pull}	&	pull current branch from upstream	\\
-	\code{git push}	&	push current branch to upstream	\\
-	\code{git push --all}	&	push all branches to their upstream	\\
+	\code{git pull}	&	\code{pull} current branch from upstream	\\
+	\code{git push}	&	\code{push} current branch to upstream	\\
+	\code{git push --all}	&	\code{push} all branches to their upstream	\\
 	\multicolumn{2}{|g|}{\code{git branch --set-upstream-to=}\remote{}\code{/}\branch{}}\\
 		&	set upstream of the current branch	\\
 }
