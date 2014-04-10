@@ -49,3 +49,6 @@ du -ah
 df
 free
 df
+find -L -type l
+echo $manyspaces | xargs
+echo $singleline | xargs -n1
