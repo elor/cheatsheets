@@ -168,10 +168,6 @@ Bonus: add the \code{git graph} alias:
 
 \section{Upstreams}
 
-%%%%%%% DIRTY HACK AHEAD %%%%%%%
-\vspace{0.57ex}
-%%%%%%% DIRTY HACK END %%%%%%%
-
 \mytable{gX}{
 	\code{git push -u} \remote{} \branch{}	&	set upstream and push to \remote{} \branch{}	\\
 	\code{git pull}	&	\code{pull} current branch from upstream	\\
@@ -222,6 +218,8 @@ Bonus: add the \code{git graph} alias:
 	\code{git ls-tree -r HEAD}	&	show modification commit for each file	\\
 	\code{git show \commit{}}	&	\code{diff} of the given \commit{} to its parent	\\
 	\code{git blame} \file{}	&	show the modification commit for each line \\
+	\multicolumn{2}{|g|}{\code{git log --pretty=format: --name-only --diff-filter=A | sort -u}}	\\
+  &	list all files ever commited	\\
 }
 
 \section{Undo Bad Things \texttrademark}
@@ -232,18 +230,10 @@ Bonus: add the \code{git graph} alias:
 	\attention{\sct{\code{git rebase} \\ \myopt{--onto} \branch{} \commit{}}}	&	undo \code{git branch} by moving commits on top of the old branch	\\
 	\attention{\code{git push} \remote{} \commit{}:\branch{}}	&	revert remote branch to \commit{}	\\
 	\attention{\code{rm -rfv} \repo{}\code{/.git*}}	&	undo \code{git init}	\\
+	\multicolumn{2}{|a|}{\code{git filter-branch --force --index-filter 'git rm --cached}}	\\
+	\multicolumn{2}{|a|}{\code{--ignore-unmatch} \file{}\code{' --prune-empty --tag-name-filter cat -- --all}}	\\
+	\multicolumn{2}{|r|}{Delete any copy or reference of a file on the current branch}	\\
 }
-\\
-\vspace{1em}
-Delete any copy or reference of a file on the current branch:
-\mytable{a}{
-	\code{git filter-branch --force --index-filter 'git rm --cached}
-	\\
-	\code{--ignore-unmatch} \file{} \code{' --prune-empty --tag-name-filter cat -- --all}
-	\\
-}
-
-
 
 \section{Further Reading}
 
