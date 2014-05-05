@@ -1,0 +1,315 @@
+\include{common}
+
+\begin{document}
+
+\begin{multicols*}{3}
+
+\begin{center}
+	\LARGE{\textbf{Bash Scripting Cheat Sheet}}\\
+	\large{\reflectbox{\textcopyright} Erik E. Lorenz, \today}
+\end{center}
+
+\section{Internal Files and Directories}
+\mytable{gX}{
+	\code{$\sim$/.bashrc}	&	user-specific constants. Sourced when bash starts	\\
+	\code{$\sim$/.bash\_profile}	&	similar to \code{$\sim$/.bashrc} \\
+	\code{$\sim$/.bash\_history}	&	list of previous bash commands \\
+	\code{$\sim$/.bash\_logout}	&	sourced on bash logout	\\
+	\code{/bin/bash}	&	location of the \code{bash} executable	\\
+}
+
+\section{Terms}
+\mytable{iXi}{
+	\thead{term}	&	\thead{description}	&	\thead{examples}	\\
+	\user{}	&	a user account of the system	&	\sct{root\\e.lorenz}\\
+	\file{}	&	regular file &	\sct{$\sim$/file.txt\\code/asd/src/main.cpp}	\\
+	\dir{}	&	regular directory &	\sct{$\sim$/directory\\/etc}	\\
+	\cmd{}	&	any command	&	\sct{\code{echo}\\\code{date}}	\\
+	\host{}	&	url or ip of a remote machine	&	\sct{enssim.etit.tu-chemnitz.de\\134.109.52.89}	\\
+	\port{}	&	a network port for interaction with a specific program	&	\sct{22\\31159}	\\
+	\url{}	&	fully qualified url	&	\sct{http://\host{}:port/\dir{}/\file{}}	\\
+	\pid{}	&	process id	&	18738	\\
+	alias	&	command alias	& \code{alias ssk='ssh enssim'}	\\
+	export	&	define an environment variable	&	\code{export PATH=$\sim$/bin:\$PATH}	\\
+	source	&	read a script in the current bash instance, e.g. for exporting	&	\sct{\code{. $\sim$/.bashrc}\\\code{source $\sim$/.bashrc}}	\\
+}
+
+\section{Useful Environment Variables}
+\mytable{iX} {
+	\code{\$HOME}	&	home directory. Usually \code{/home/\user{}}	\\
+	\code{$\sim$}	&	same as \code{\$HOME}	\\
+	\code{\$USER}	&	name of the current \user{}	\\
+	\code{\$EUID, \$UID}	&	(effective) user id	\\
+	\code{\$PATH}	&	colon-separated list of search directories for binaries	\\
+	\code{\$LIBRARY\_PATH}	&	search paths for .so and .a files at compile time	\\
+	\code{\$LD\_LIBRARY\_PATH}	&	search paths for .so and .a files at run time	\\
+	\code{\$PWD}	&	current working directory	\\
+	\code{\$EDITOR}	&	preferred command line text editor, e.g. \code{vim}	\\
+	\code{\$IFS}	&	internal field separator, e.g. for \code{for...in} constructs	\\
+	\code{\$LINENO}	&	current line number in a script, e.g. for debugging	\\
+	\code{\$LANG}	&	preferred language of the user	\\
+	\code{\$SHELL}	&	path of the shell-executable. Should be \code{/bin/bash}	\\
+	\code{\$SHLVL}	&	shell nesting level on the current machine	\\
+	\code{\$\$}	&	\pid{} of the current script or bash instance	\\
+	\code{\$PPID}	&	\pid{} of the parent process	\\
+	\code{\$!}	&	\pid{} of the last child process (see \code{Forking})	\\
+	\code{!!}	&	previous command	\\
+	\code{!\$}	&	last argument of the previous command	\\
+	\code{!\^}	&	all arguments of the previous command	\\
+	\code{\$@}	&	array of arguments to a script or function	\\
+	\code{\$0}	&	command used to run this script or bash instance	\\
+	\code{\$1, \$2, ... \$9}	&	first, second, ... ninth argument	\\
+}
+
+\section{Cheat Sheet Color Coding}
+\mytable{gX}{
+	\important{\code{cmd}}	&	Most frequent commands	\\
+	\code{cmd}	&	Usually not harmful	\\
+	\attention{\code{cmd}}	&	deletes data or annoys others. May require root permissions	\\
+}
+
+\section{Debugging}
+\mytable{gX}{
+	\code{set -x}	&	print every command which is executed	\\
+	\code{trap read debug}	&	confirm every command with [Enter]	\\
+}
+
+\section{Hotkeys}
+\mytable{gX}{
+	\important{Tab}	&	autocomplete the current command or path \\
+	Ctrl+I	&	same as Tab	\\
+	\important{Ctrl+C}	&	kill the current command	\\
+	\important{Ctrl+D}	&	exit the current shell	\\
+	Ctrl+X Ctrl+E	&	write the next command in your \$EDITOR	\\
+	\important{Ctrl+R}	& reverse-search your history for a command	\\
+	Ctrl+Z	&	suspend the process. Resume with \code{\%}	\\
+	Ctrl+L	&	clear the terminal. Similar to \code{clear}	\\
+	Ctrl+U	&	clear the line before the cursor	\\
+	Ctrl+K	&	clear the line after the cursor	\\
+	Alt+F	&	move forward one word	\\
+	Alt+B	&	move backward one word	\\
+}
+
+\section{Redirecting Standard I/O}
+\mytable{gX}{
+	\important{\code{\cmd{} > \file{}}}	&	write output to a new \file{}	\\
+	\code{\cmd{} | tee \file{}}	&	both print and write to a file	\\
+	\important{\code{\cmd{} >> \file{}}}	&	append output to \file{}	\\
+	\code{\cmd{} 2> \file{}}	&	write errors to \file{}	\\
+	\code{\cmd{} 2>\&1}	&	redirect errors to standard output	\\
+	\important{\code{\cmd{} \&>/dev/null}}	&	discard all output	\\
+	\code{\cmd{} < \file{}}	&	read input from \file{}	\\
+	\code{\cmd{} << EOF}	&	read input from command line until word "\code{EOF}"	\\
+	\code{\cmd{} <<< \cmd{}}	&	read input from the rest of the line	\\
+	\code{\cmd{} | \cmd{}}	&	redirect output from the first to the second \cmd{}	\\
+}
+
+\section{Child Processes and Forking}
+\mytable{gX}{
+	\code{\cmd{} \&}	&	run \cmd{} in the background as a child process (fork)	\\
+	\code{(\cmd{} \&); exit}	&	run \cmd{} in the background and exit\\
+	\specialcell{set -m\\trap func CHLD}	&	run \code{func} when a child exits	\\
+	\code{wait}	&	wait for all child processes to exit	\\
+}
+
+\section{Automatic String Expansion}
+\mytable{gX}{
+	\important{\code{.bash*}}	&	.bash\_history .bash\_logout .bash\_profile .bashrc	\\
+	\important{\code{.bash\_???????}}	&	.bash\_history .bash\_profile	\\
+	\code{\{7..11\}}	&	7 8 9 10 11	\\
+	\code{\{07..11\}}	&	07 08 09 10 11	\\
+	\code{\{a..g\}}	&	a b c d e f g	\\
+	\code{sim\{08..10\}}	&	sim08 sim09 sim10	\\
+}
+
+\section{Conditions}
+\mytable{gX}{
+}
+
+\section{Loops}
+\mytable{gX}{
+	\specialcell{\code{for word in \$words; do}\\ \code{ echo \$word}\\ \code{done}}	&	print every word in \$words\\
+	\multicolumn{2}{|i|}{\code{for i in \{0..9\}; do echo \$i; done}}	\\
+	\multicolumn{2}{|g|}{\code{i=0; while (( num < 10 )); do echo \$i; let i++; done}}	\\
+	\multicolumn{2}{|r|}{Two ways of iterating from 0 to 9}	\\
+}
+
+\section{Repository Initialization}
+\mytable{gX}{
+	\code{git init} \dir	&	create \dir{} as a git repository	\\
+	\code{git init}	&	convert the current directory to a git repository	\\
+	\code{git clone} \url{}	&	clone a remote repository into a new directory	\\
+	\myopt{--bare}	&	\myoptd{without working copy}	\\
+	\myopt{--depth} \textit{num}	&	\myoptd{shallow clone: omits older commits}	\\
+}
+
+\section{Workflow Examples}
+\mytable{iX}{
+	\sct{
+		\code{cd} \dir{}\\
+		\code{git init}\\
+		\code{git add .}\\
+		\code{git commit -m 'initial commit'}\\
+	}	&	
+	setup of a new repository
+	\\\hline
+	\sct{
+		(file editing)\\
+		\code{git add }\file{}\\
+		\code{git commit -m 'feature }\textit{asd} \code{implemented'}\\
+	}	&
+	usual workflow
+	\\\hline
+	\sct{
+		\code{git checkout master}\\
+		\code{git merge --no-ff feature-}\textit{asd}\\
+		\code{git branch -d feature-}\textit{asd}\\
+		\code{git push origin master}\\
+	}	&
+	update of the master branch with changes from a feature branch before deleting it
+	\\
+}
+
+\section{Managing Local Changes}
+\mytable{gX}{
+	\important{\code{git status}}	&	show changed files since last commit	\\
+	\code{git status} \dir{}\textbar\file{}	&	show status of a subset of files	\\
+	\code{git diff}	&	show all changed lines since last commit	\\
+	\code{git diff} \file{}	&	show \code{diff} for \file{} only	\\
+	\code{git diff} \file{} \commit{}	&	show changes since \commit{}	\\
+	\code{git add} \dir{}\textbar\file{}	&	stage \dir{} or \file{} for the next commit	\\
+	\code{git add -u}	&	stage all tracked files	\\
+	\code{git add --all}	&	stage all existing files, including new files	\\
+	\code{git add -A}	&	alias for \code{git add --all}	\\
+	\code{git add -i}	&	interactive staging	\\
+	\code{git stage}	&	alias for \code{git add}	\\
+	\code{git rm} \file{}	&	delete \file{} and stage its deletion	\\
+	\code{git mv} \textit{file... \textit{target}}	&	move and stage one or more files	\\
+	\code{git commit}	&	bundle staged changes int a new \commit{}	\\
+	\myopt{-m '}\textit{commit message}\myoptc{'}	&	\myoptd{pass the commit message in-line}	\\
+	\attention{\myopt{--amend}}	&	\myoptd{add changes to last commit}	\\
+}
+
+\section{Managing Local Branches}
+\mytable{gX}{
+	\code{git branch}	&	show current branch	\\
+	\code{git branch -a}	&	show all branches	\\
+	\code{git checkout} \branch{}	&	move to \branch{}	\\
+	\code{git branch} \branch{}	&	create a new branch at the current commit	\\
+	\code{git checkout -b} \branch{}	&	create a new branch and move to it	\\
+	\code{git merge} \branch{}	&	merge changes from another branch	\\
+	\myopt{--no-ff}	&	\myoptd{force a new commit (cleaner merge history)}	\\
+	\myopt{--ff-only}	&	\myoptd{don't merge if both branches were changed}	\\
+	\code{git mergetool}	&	starts a program to help with merge conflicts	\\
+	\code{git branch -d} \branch{}	&	delete a merged local branch	\\
+	\attention{\code{git branch -D}	\branch{}}	&	force deletion of a local branch	\\
+}
+
+\section{Stashes}
+\mytable{gX}{
+	\code{git stash save}	&	detach all changes since the last commit to a stash	\\
+	\code{git stash list}	&	list all stashes	\\
+	\code{git stash show}	&	show which files were changed	\\
+	\code{git stash pop}	&	remove and apply a stash (e.g. to a different branch)	\\
+}
+
+\section{Remote Repositories}
+\mytable{gX}{
+	\code{git clone} \url{}	&	automatically creates the remote \code{origin}	\\
+	\code{git remote -v}	&	show all remotes and addresses	\\
+	\code{git remote add} \remote{} \url{}	&	add a new remote	\\
+	\code{git remote rm} \remote{}	&	remove a remote	\\
+	\code{git fetch} \remote{}	&	download all \remote{} branches w/o \code{merge}	\\
+	\code{git fetch --all}	&	\code{fetch} from all remotes	\\
+	\code{git pull} \remote{} \branch{}	&	\code{fetch} and \code{merge} a remote branch	\\
+	\myopt{--ff-only}	&	\myoptd{Only merge if there's no file conflict}	\\
+	\code{git push} \remote{} \branch{}	&	upload local commits to \remote{}	\\
+	\attention{\code{git push} \remote{} \code{:}\branch{}}	&	delete \branch{} on \remote{}	\\
+	\code{git remote prune} \remote{}	&	delete invalid refs to remote branches \\
+}
+
+\section{Upstreams}
+
+\mytable{gX}{
+	\code{git push -u} \remote{} \branch{}	&	set upstream and push to \remote{} \branch{}	\\
+	\code{git pull}	&	\code{pull} current branch from upstream	\\
+	\code{git push}	&	\code{push} current branch to upstream	\\
+	\code{git push --all}	&	\code{push} all branches to their upstream	\\
+	\multicolumn{2}{|g|}{\code{git branch --set-upstream-to=}\remote{}\code{/}\branch{}}\\
+		&	set upstream of the current branch	\\
+}
+
+\section{Managing Tags}
+\mytable{gX}{
+	\code{git tag -a }\tag{} \commit{}\textbar\branch{}	&	create a tag at \commit{} or \branch{}	\\
+	\myopt{-m '}\textit{tag message}\code{'}	&	\myoptd{pass the tag message in-line}	\\
+	\code{git tag -d }\tag{}	&	delete \tag{} locally	\\
+	\code{git push --tags}	&	push all tags	\\
+	\code{git push} \remote{} \code{:refs/tags/}\tag{}	&	delete a remote tag	\\
+}
+
+\section{Searching for Files}
+\mytable{gX}{
+	\code{git grep '}\textit{pattern}\code{'}	&	search all tracked files for \textit{pattern}	\\
+	\code{git ls-files}	&	list tracked files	\\
+	\myopt{-d}	&	\myoptd{list deleted files}	\\
+	\myopt{-m}	&	\myoptd{list modified files}	\\
+	\myopt{-u}	&	\myoptd{on merge conflict, list unmerged files}	\\
+	\myopt{--other --exclude-standard}	&	\myoptd{list untracked files} \\
+	\code{git clean -ndx}	&	list untracked and ignored files	\\
+	\code{git clean -ndX}	&	list ignored files	\\
+}
+
+\section{Working Directory Cleanup}
+\mytable{gX}{
+	\code{git clean -f}	&	delete untracked files	\\
+	\code{git clean -fd}	&	delete untracked files and directories	\\
+	\code{git clean -fdX}	&	delete ignored files only	\\
+	\code{git clean -fdx}	&	delete untracked and ignored files	\\
+	\multicolumn{2}{|g|}{\code{git archive --prefix=}\textit{project}\code{/ -o }\textit{project}\code{.tar.gz} \branch{}}	\\
+	&	create a tar.gz archive of all tracked files	\\
+}
+
+\section{Commit History}
+\mytable{gX}{
+	\code{git log}	&	show local commit history	\\
+	\myopt{--oneline}	&	\myoptd{one line per commit}	\\
+	\myopt{--decorate}	&	\myoptd{show tags and branch names}	\\
+	\myopt{--merges}	&	\myoptd{show merge commits only}	\\
+	\code{git graph}	&	graphical commit history. See \textbf{Global Setup}	\\
+	\code{git ls-tree -r HEAD}	&	show modification commit for each file	\\
+	\code{git show \commit{}}	&	\code{diff} of the given \commit{} to its parent	\\
+	\code{git blame} \file{}	&	show the modification commit for each line \\
+	\multicolumn{2}{|g|}{\code{git log --pretty=format: --name-only --diff-filter=A | sort -u}}	\\
+  &	list all files ever commited	\\
+}
+
+\section{Undo Bad Things \texttrademark}
+\mytable{gX}{
+	\attention{\code{git reset HEAD \file{}}}	&	undo \code{git add} of a single file	\\
+	\attention{\code{git reset --hard}}	&	undo everything since last commit	\\
+	\attention{\code{git checkout --} \file{}}	&	undo \file{} changes since last commit	\\
+	\attention{\sct{\code{git rebase} \\ \myopt{--onto} \branch{} \commit{}}}	&	undo \code{git branch} by moving commits on top of the old branch	\\
+	\attention{\code{git push} \remote{} \commit{}:\branch{}}	&	revert remote branch to \commit{}	\\
+	\attention{\code{rm -rfv} \repo{}\code{/.git*}}	&	undo \code{git init}	\\
+	\multicolumn{2}{|a|}{\code{git filter-branch --force --index-filter 'git rm --cached}}	\\
+	\multicolumn{2}{|a|}{\code{--ignore-unmatch} \file{}\code{' --prune-empty --tag-name-filter cat -- --all}}	\\
+	\multicolumn{2}{|r|}{Delete any copy or reference of a file on the current branch}	\\
+}
+
+\section{Further Reading}
+
+\begin{tabularx}{0.33\textwidth}{X}
+\textbf{Git Documentation}\\
+http://git-scm.com/doc
+\\
+\textbf{A successful Git branching model}\\
+http://nvie.com/posts/a-successful-git-branching-model/
+\\
+\textbf{AlBlue's Git Tip of the Week}\\
+http://alblue.bandlem.com/Tag/gtotw/
+\end{tabularx}
+
+\end{multicols*}
+
+\end{document}
