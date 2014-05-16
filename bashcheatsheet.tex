@@ -55,7 +55,9 @@
 	\code{\$!}	&	\pid{} of the last child process (see \code{Forking})	\\
 	\code{!!}	&	previous command	\\
 	\code{!\$}	&	last argument of the previous command	\\
-	\code{!\^}	&	all arguments of the previous command	\\
+	\code{!\^}	&	first arguments of the previous command	\\
+	\code{!:1, !:2, ...}	&	arguments of the last command	\\
+	\code{!:1-}	&	all arguments of the last command	\\
 	\code{\$@}	&	array of arguments to a script or function	\\
 	\code{\$0}	&	command used to run this script or bash instance	\\
 	\code{\$1, \$2, ... \$9}	&	first, second, ... ninth argument	\\
@@ -78,6 +80,7 @@
 \mytable{gX}{
 	\important{Tab}	&	autocomplete the current command or path \\
 	Ctrl+I	&	same as Tab	\\
+	Alt+*	&	insert all possible completions	\\
 	\important{Ctrl+C}	&	kill the current command	\\
 	\important{Ctrl+D}	&	exit the current shell	\\
 	Ctrl+X Ctrl+E	&	write the next command in your \$EDITOR	\\
@@ -88,6 +91,8 @@
 	Ctrl+K	&	clear the line after the cursor	\\
 	Alt+F	&	move forward one word	\\
 	Alt+B	&	move backward one word	\\
+	Alt+D	&	delete next word	\\
+	Alt+Backspace	&	delete previous word	\\
 }
 
 \section{Redirecting Standard I/O}
@@ -124,14 +129,38 @@
 
 \section{Conditions}
 \mytable{gX}{
+	\specialcell{\code{if \textit{expression}; then} \\ \code{  \textit{do something}} \\ \code{else} \\ \code{  \textit{do something else}}\\ \code{fi}}	&	typical if statement. Expressions can be commands and functions (return 0 $\rightarrow$ true) or builtin conditionals, see below	\\
+	\code{\textit{expression} \&\& \cmd{}}	&	run \cmd{} if \textit{expression} is true	\\
+	\code{\textit{expression} || \cmd{}}	&	run \cmd{} if \textit{expression} is false	\\
+}
+
+\section{Unary Expressions}
+\mytable{gXgX}{
+	\important{\code{[ -z \str{} ]}}	&	\str{} is empty		&	\important{\code{[ -n \str{} ]}}	&	\str{} is not empty	\\
+	\code{[ -e \file{} ]}	&	\file{} exists	&	\code{[ -s \file{} ]}	&	\file{} is not empty	\\
+	\code{[ -f \file{} ]}	&	\file{} is a regular file	&	\code{[ -d \dir{} ]}	&	dir{} is a directory	\\
+	\code{[ -L \file{} ]}	&	\file{} is a symlink	&	\code{[ -x \file{} ]}	&	\file{} is executable	\\
+	\code{[ -r \file{} ]}	&	\file{} is readable	&	\code{[ -w \file{} ]}	&	\file{} is writable	\\
+	\code{[ -v \str{} ]}	&	\str{} is a variable	&	\code{[ -O \file{} ]}	&	\$USER owns \file{} 	\\
+}
+
+\section{Comparison Expressions}
+\mytable{gXgX}{
+	\important{\specialcell{\code{[ \textit{arg1} < \textit{arg2} ]}\\\code{[ \textit{arg1} > \textit{arg2} ]}\\\code{[ \textit{arg1} == \textit{arg2} ]}\\\code{[ \textit{arg1} != \textit{arg2} ]}}}	&	strings	&
+	\specialcell{\code{[[ \textit{arg1} < \textit{arg2} ]]}\\\code{[[ \textit{arg1} > \textit{arg2} ]]}\\\code{[[ \textit{arg1} == \textit{arg2} ]]}\\\code{[[ \textit{arg1} != \textit{arg2} ]]}}	&	raw strings	\\
+	\specialcell{\code{[ \textit{arg1} -lt \textit{arg2} ]}\\\code{[ \textit{arg1} -gt \textit{arg2} ]}\\\code{[ \textit{arg1} -eq \textit{arg2} ]}\\\code{[ \textit{arg1} -ne \textit{arg2} ]}}	&	integers	&
+	\specialcell{\code{(( \textit{arg1} < \textit{arg2} ))}\\\code{(( \textit{arg1} > \textit{arg2} ))}\\\code{(( \textit{arg1} == \textit{arg2} ))}\\\code{(( \textit{arg1} != \textit{arg2} ))}}	&	integers	\\
 }
 
 \section{Loops}
 \mytable{gX}{
-	\specialcell{\code{for word in \$words; do}\\ \code{ echo \$word}\\ \code{done}}	&	print every word in \$words\\
+	\important{\specialcell{\code{for word in \$words; do}\\ \code{ echo \$word}\\ \code{done}}}	&	print every word in \$words\\
+	\specialcell{\code{while \textit{expression}; do}\\\code{  \textit{do something}}\\\code{done}}	&	traditional while loop	\\
+	\multicolumn{2}{|c|}{Two ways of iterating from 0 to 9:}	\\
 	\multicolumn{2}{|i|}{\code{for i in \{0..9\}; do echo \$i; done}}	\\
 	\multicolumn{2}{|g|}{\code{i=0; while (( num < 10 )); do echo \$i; let i++; done}}	\\
-	\multicolumn{2}{|r|}{Two ways of iterating from 0 to 9}	\\
+	\multicolumn{2}{|c|}{iterate over every line in \$var:}	\\
+	\multicolumn{2}{|g|}{\code{IFS=\$'\textbackslash r\textbackslash n'; for line in \`\$var\`; do echo \$line; done}}	\\
 }
 
 \section{Repository Initialization}
