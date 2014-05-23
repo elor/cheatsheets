@@ -5,16 +5,16 @@
 \begin{multicols*}{3}
 
 \begin{center}
-	\LARGE{\textbf{Bash Scripting Cheat Sheet}}\\
+	\LARGE{\textbf{Bash Programming Cheat Sheet}}\\
 	\large{\reflectbox{\textcopyright} Erik E. Lorenz, \today}
 \end{center}
 
 \section{Internal Files and Directories}
 \mytable{gX}{
-	\code{$\sim$/.bashrc}	&	user-specific constants. Sourced when bash starts	\\
+	\code{$\sim$/.bashrc}	&	user-specific global functions and aliases	\\
 	\code{$\sim$/.bash\_profile}	&	similar to \code{$\sim$/.bashrc} \\
 	\code{$\sim$/.bash\_history}	&	list of previous bash commands \\
-	\code{$\sim$/.bash\_logout}	&	sourced on bash logout	\\
+	\code{$\sim$/.bash\_logout}	&	runs on bash logout	\\
 	\code{/bin/bash}	&	location of the \code{bash} executable	\\
 }
 
@@ -24,22 +24,22 @@
 	\user{}	&	a user account of the system	&	\sct{root\\e.lorenz}\\
 	\file{}	&	regular file &	\sct{$\sim$/file.txt\\code/asd/src/main.cpp}	\\
 	\dir{}	&	regular directory &	\sct{$\sim$/directory\\/etc}	\\
-	\cmd{}	&	any command	&	\sct{\code{echo}\\\code{date}}	\\
-	\host{}	&	url or ip of a remote machine	&	\sct{enssim.etit.tu-chemnitz.de\\134.109.52.89}	\\
-	\port{}	&	a network port for interaction with a specific program	&	\sct{22\\31159}	\\
-	\url{}	&	fully qualified url	&	\sct{http://\host{}:port/\dir{}/\file{}}	\\
+	\cmd{}	&	any command	&	\sct{\code{echo}\\\code{date +\%F}}	\\
+	\host{}	&	name or ip of a remote machine	&	\sct{enssim.etit.tu-chemnitz.de\\134.109.52.89}	\\
+	\port{}	&	a network port for communication with a program	&	\sct{22\\31159}	\\
+	\url{}	&	uniform resource locator	&	\sct{http://\host{}:port/\dir{}/\file{}}	\\
 	\pid{}	&	process id	&	18738	\\
 	alias	&	command alias	& \code{alias ssk='ssh enssim'}	\\
 	export	&	define an environment variable	&	\code{export PATH=$\sim$/bin:\$PATH}	\\
-	source	&	read a script in the current bash instance, e.g. for exporting	&	\sct{\code{. $\sim$/.bashrc}\\\code{source $\sim$/.bashrc}}	\\
+	source	&	run a script that sets environment variables/aliases	&	\sct{\code{. $\sim$/.bashrc}\\\code{source $\sim$/.bashrc}}	\\
 }
 
 \section{Useful Environment Variables}
 \mytable{iX} {
 	\code{\$HOME}	&	home directory. Usually \code{/home/\user{}}	\\
 	\code{$\sim$}	&	same as \code{\$HOME}	\\
-	\code{\$USER}	&	name of the current \user{}	\\
-	\code{\$EUID, \$UID}	&	(effective) user id	\\
+	\code{\$USER}	&	name of the current user	\\
+	\code{\$UID, \$EUID}	&	user id, effective user id	\\
 	\code{\$PATH}	&	colon-separated list of search directories for binaries	\\
 	\code{\$LIBRARY\_PATH}	&	search paths for .so and .a files at compile time	\\
 	\code{\$LD\_LIBRARY\_PATH}	&	search paths for .so and .a files at run time	\\
@@ -55,26 +55,26 @@
 	\code{\$\$}	&	\pid{} of the current script or bash instance	\\
 	\code{\$PPID}	&	\pid{} of the parent process	\\
 	\code{\$!}	&	\pid{} of the last child process (see \code{Forking})	\\
+	\code{\$0}	&	command used to run this script or bash instance	\\
+	\code{\$@}	&	array of arguments of a script or function	\\
+	\code{\$1, \$2, ... \$9}	&	first, second, ... ninth argument	\\
 	\code{!!}	&	previous command	\\
 	\code{!\$}	&	last argument of the previous command	\\
 	\code{!\^}	&	first arguments of the previous command	\\
 	\code{!:1, !:2, ...}	&	arguments of the last command	\\
 	\code{!:1-}	&	all arguments of the last command	\\
-	\code{\$@}	&	array of arguments to a script or function	\\
-	\code{\$0}	&	command used to run this script or bash instance	\\
-	\code{\$1, \$2, ... \$9}	&	first, second, ... ninth argument	\\
 }
 
 \section{Cheat Sheet Color Coding}
 \mytable{gX}{
 	\important{\code{cmd}}	&	Most frequent commands	\\
 	\code{cmd}	&	Usually not harmful	\\
-	\attention{\code{cmd}}	&	deletes data or annoys others. May require root permissions	\\
+	\attention{\code{cmd}}	&	deletes data, requires root or bad programming	\\
 }
 
 \section{Debugging}
 \mytable{gX}{
-	\code{set -x}	&	print every command which is executed	\\
+	\code{set -x}	&	print every command before execution	\\
 	\code{trap read debug}	&	confirm every command with [Enter]	\\
 }
 
@@ -84,10 +84,12 @@
 	Ctrl+I	&	same as Tab	\\
 	Alt+*	&	insert all possible completions	\\
 	\important{Ctrl+C}	&	kill the current command	\\
-	\important{Ctrl+D}	&	exit the current shell	\\
+	\important{Ctrl+D}	&	exit the current shell (write end-of-file character)	\\
 	Ctrl+X Ctrl+E	&	write the next command in your \$EDITOR	\\
 	\important{Ctrl+R}	& reverse-search your history for a command	\\
 	Ctrl+Z	&	suspend the process. Resume with \code{\%}	\\
+	\attention{Ctrl+S}	&	suspend the current terminal	\\
+	\important{Ctrl+Q}	&	resume a suspended terminal	\\
 	Ctrl+L	&	clear the terminal. Similar to \code{clear}	\\
 	Ctrl+U	&	clear the line before the cursor	\\
 	Ctrl+K	&	clear the line after the cursor	\\
@@ -99,44 +101,55 @@
 
 \section{Redirecting Standard I/O}
 \mytable{gX}{
-	\important{\code{\cmd{} > \file{}}}	&	write output to a new \file{}	\\
-	\code{\cmd{} | tee \file{}}	&	both print and write to a file	\\
+	\important{\code{\cmd{} > \file{}}}	&	write output to a new \file{} (overwrites)	\\
 	\important{\code{\cmd{} >> \file{}}}	&	append output to \file{}	\\
+	\code{\cmd{} | tee \file{}}	&	both print and write to a file (add \code{-a} to append)	\\
 	\code{\cmd{} 2> \file{}}	&	write errors to \file{}	\\
 	\code{\cmd{} 2>\&1}	&	redirect errors to standard output	\\
 	\important{\code{\cmd{} \&>/dev/null}}	&	discard all output	\\
 	\code{\cmd{} < \file{}}	&	read input from \file{}	\\
-	\code{\cmd{} << EOF}	&	read input from command line until word "\code{EOF}"	\\
+	\code{\cmd{} << EOF}	&	read input from command line until the line "\code{EOF}"	\\
 	\code{\cmd{} <<< \cmd{}}	&	read input from the rest of the line	\\
-	\code{\cmd{} | \cmd{}}	&	redirect output from the first to the second \cmd{}	\\
+	\code{\cmd{} | \cmd{}}	&	pipe output from the first \cmd{} to the second	\\
 }
 
-\section{Child Processes and Forking}
+\section{Process Control (Forking and Killing)}
 \mytable{gX}{
-	\code{\cmd{} \&}	&	run \cmd{} in the background as a child process (fork)	\\
-	\code{(\cmd{} \&); exit}	&	run \cmd{} in the background and exit\\
-	\specialcell{set -m\\trap func CHLD}	&	run \code{func} when a child exits	\\
-	\code{wait}	&	wait for all child processes to exit	\\
+	\important{\code{\cmd{} \&}}	&	Send \cmd{} to background, return to command line	\\
+	\code{wait}	&	wait for forked processes to finish	\\
+	\code{( \cmd{} \& );exit}	&	fork a command within a one-liner (example)x	\\
+	\attention{\code{killall \cmd{}}}	&	stop all processes with the name \cmd{}	\\
+	\attention{\code{kill \pid{}}}	&	ask a process to stop	\\
+	\attention{\code{kill -KILL \pid{}}}	&	forcefully stop a process	\\
 }
 
-\section{Automatic String Expansion}
+\section{Automatic String Expansion (Examples)}
 \mytable{gX}{
-	\important{\code{.bash*}}	&	.bash\_history .bash\_logout .bash\_profile .bashrc	\\
-	\important{\code{.bash\_???????}}	&	.bash\_history .bash\_profile	\\
-	\code{\{7..11\}}	&	7 8 9 10 11	\\
-	\code{\{07..11\}}	&	07 08 09 10 11	\\
-	\code{\{a..g\}}	&	a b c d e f g	\\
-	\code{sim\{08..10\}}	&	sim08 sim09 sim10	\\
+	\important{\code{echo *.txt}}	&	asd.txt dsa.txt longfilename.txt s.txt	\\
+	\important{\code{echo ?s?.t?t}}	&	asd.txt dsa.txt bse.tot	\\
+	\code{echo \{7..11\}}	&	7 8 9 10 11	\\
+	\code{echo \{07..11\}}	&	07 08 09 10 11	\\
+	\code{echo \{a..g\}}	&	a b c d e f g	\\
+	\code{echo sim\{08..10\}}	&	sim08 sim09 sim10	\\
+	\code{echo foo.\{txt,pdf,png\}}	&	foo.txt foo.pdf foo.png	\\
 }
 
-\section{Conditions}
+\section{Flow Control}
 \mytable{gX}{
-	\important{\specialcell{\code{if \textit{expression}; then} \\ \code{  \textit{do something}} \\ \code{else} \\ \code{  \textit{do something else}}\\ \code{fi}}}	&	typical if statement. Expressions can be commands and functions (return 0 $\rightarrow$ true) or built-in conditional expressions, see below	\\
+	\important{\specialcell{\code{if \textit{expression}; then} \\ \code{  \textit{do something}} \\ \code{else} \\ \code{  \textit{do something else}}\\ \code{fi}}}	&	Expressions can be commands and functions (return 0 $\rightarrow$ true) or built-in conditionals	\\
 	\code{\textit{expression} \&\& \cmd{}}	&	run \cmd{} if \textit{expression} is true	\\
 	\code{\textit{expression} || \cmd{}}	&	run \cmd{} if \textit{expression} is false	\\
 }
 
-\section{Unary Expressions}
+\section{Aborting and Exiting}
+\mytable{gXgX}{
+	\code{continue}	&	next loop iteration	&
+	\code{break}	&	exit loop	\\
+	\code{return}	&	exit function	&
+	\code{exit}	&	exit script / terminal	\\
+}
+
+\section{Unary Conditionals}
 \mytable{gXgX}{
 	\important{\code{[ -z \str{} ]}}	&	\str{} is empty		&	\important{\code{[ -n \str{} ]}}	&	\str{} is not empty	\\
 	\code{[ -e \file{} ]}	&	\file{} exists	&	\code{[ -s \file{} ]}	&	\file{} is not empty	\\
@@ -146,10 +159,10 @@
 	\code{[ -v \str{} ]}	&	\str{} is a variable	&	\code{[ -O \file{} ]}	&	\$USER owns \file{} 	\\
 }
 
-\section{Comparison Expressions}
+\section{Binary Conditionals}
 \mytable{gXgX}{
 	\important{\specialcell{\code{[ \textit{arg1} < \textit{arg2} ]}\\\code{[ \textit{arg1} > \textit{arg2} ]}\\\code{[ \textit{arg1} == \textit{arg2} ]}\\\code{[ \textit{arg1} != \textit{arg2} ]}}}	&	strings	&
-	\specialcell{\code{[[ \textit{arg1} < \textit{arg2} ]]}\\\code{[[ \textit{arg1} > \textit{arg2} ]]}\\\code{[[ \textit{arg1} == \textit{arg2} ]]}\\\code{[[ \textit{arg1} != \textit{arg2} ]]}}	&	raw strings	\\
+	\specialcell{\code{[[ \textit{arg1} < \textit{arg2} ]]}\\\code{[[ \textit{arg1} > \textit{arg2} ]]}\\\code{[[ \textit{arg1} == \textit{arg2} ]]}\\\code{[[ \textit{arg1} != \textit{arg2} ]]}}	&	\specialcell{raw strings\\(no string\\expansion)}	\\
 	\specialcell{\code{[ \textit{arg1} -lt \textit{arg2} ]}\\\code{[ \textit{arg1} -gt \textit{arg2} ]}\\\code{[ \textit{arg1} -eq \textit{arg2} ]}\\\code{[ \textit{arg1} -ne \textit{arg2} ]}}	&	integers	&
 	\specialcell{\code{(( \textit{arg1} < \textit{arg2} ))}\\\code{(( \textit{arg1} > \textit{arg2} ))}\\\code{(( \textit{arg1} == \textit{arg2} ))}\\\code{(( \textit{arg1} != \textit{arg2} ))}}	&	integers	\\
 }
@@ -158,11 +171,12 @@
 \mytable{gX}{
 	\important{\specialcell{\code{for word in \$words; do}\\ \code{ echo \$word}\\ \code{done}}}	&	print every word in \$words\\
 	\specialcell{\code{while \textit{expression}; do}\\\code{  \textit{do something}}\\\code{done}}	&	traditional while loop	\\
-	\multicolumn{2}{|c|}{Two ways of iterating from 0 to 9:}	\\
+	\multicolumn{2}{|c|}{Some ways of iterating over integers}	\\
 	\multicolumn{2}{|i|}{\code{for i in \{0..9\}; do echo \$i; done}}	\\
-	\multicolumn{2}{|g|}{\code{i=0; while (( num < 10 )); do echo \$i; let i++; done}}	\\
+	\multicolumn{2}{|g|}{\code{for i in `seq \$start \$num \$step`; do echo \$i; done}}	\\
+	\multicolumn{2}{|a|}{\code{i=0; while (( num < 10 )); do echo \$i; let i++; done}}	\\
 	\multicolumn{2}{|c|}{iterate over every line in \$var:}	\\
-	\multicolumn{2}{|g|}{\code{IFS=\$'\textbackslash r\textbackslash n'; for line in \$var; do echo \$line; done}}	\\
+	\multicolumn{2}{|g|}{\code{IFS=\$'\textbackslash r\textbackslash n' ; for line in \$var; do echo \$line; done}}	\\
 }
 
 \section{Parallel Workers}
@@ -177,41 +191,46 @@
 		\code{trap next CHLD}	\\
 		\code{for i in `grep proc /proc/cpuinfo`;do}	\\
 		\code{  next}	\\
-		\code{done}
+		\code{done}	\\
 		\code{wait}	\\
 		\code{trap - CHLD}	\\
-	}	&	Run \cmd{} 100 times in parallel, one process per cpu core	\\
+	}	&	Run \cmd{} 100 times in a parallel queue, one process per cpu core	\\
 }
 
 \section{I/O Processing}
 \mytable{gX}{
-	\important{\code{echo \$@}}	&	process all arguments at once	\\
+	\important{\code{\cmd{} \$@}}	&	process all arguments at once	\\
 	\specialcell{
 		\code{while true; do}	\\
-		\code{  echo "\$1"}	\\
+		\code{  \cmd{} "\$1"}	\\
 		\code{  shift || break}	\\
 		\code{done}	\\
-	}	&	print every single argument on its own. To be used in a script or a function.	\\
-	\important{\code{ls | xargs}}	&	merge all output lines	\\
+	}	&	process arguments separately. To be used in a script or function.	\\
+	\important{\code{\cmd{} | xargs}}	&	merge output to a single line	\\
+	\important{\code{echo "foo bar" | xargs \cmd{}}}	&	set arguments of \cmd{} to \code{foo bar}	\\
 	\important{\code{echo "foo bar" | xargs -n1}}	&	split to one word per line	\\
 	\important{\code{echo "foo bar" | xargs -n1 \cmd{}}}	&	run \cmd{} on every single word	\\
 	\code{read myvar}	&	read a line from stdin into \$myvar	\\
 }
 
-\section{Bash invocation}
+\section{Bash Invocation}
 \mytable{gX}{
 	\code{bash -c "\cmd{}"}	&	run \cmd{} in a fresh bash instance	\\
+	\code{su \user{} -c "\cmd{}"}	&	run \cmd{} as another user \\
+	\attention{\code{sudo "\cmd{}"}}	&	run \cmd{} as root \\
+	\code{ssh \user{}@\host{} \cmd{}}	&	run \cmd{} as \user{} on \host{}	\\
 }
 
-\section{Further Reading}
 
-\begin{tabularx}{0.33\textwidth}{X}
-\textbf{BASH Programming - Introduction HOW-TO}\\
-http://www.faqs.org/docs/Linux-HOWTO/Bash-Prog-Intro-HOWTO.html
-\\
-\textbf{Bash Manpage (online for faster searching)}\\
-http://linux.die.net/man/1/bash
-\end{tabularx}
+%\section{Further Reading}
+%
+%\begin{tabularx}{0.33\textwidth}{X}
+%\textbf{BASH Programming - Introduction HOW-TO}\\
+%http://www.faqs.org/docs/Linux-HOWTO/Bash-Prog-Intro-HOWTO.html
+%\\
+%\textbf{Bash Manpage (online for faster searching)}\\
+%http://linux.die.net/man/1/bash
+%\end{tabularx}
 
 \end{multicols*}
 
