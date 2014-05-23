@@ -47,6 +47,8 @@
 	\code{\$EDITOR}	&	preferred command line text editor, e.g. \code{vim}	\\
 	\code{\$IFS}	&	internal field separator, e.g. for \code{for...in} constructs	\\
 	\code{\$LINENO}	&	current line number in a script, e.g. for debugging	\\
+	\code{\$COLUMNS}	&	width of the terminal	\\
+	\code{\$LINES}	&	height of the terminal	\\
 	\code{\$LANG}	&	preferred language of the user	\\
 	\code{\$SHELL}	&	path of the shell-executable. Should be \code{/bin/bash}	\\
 	\code{\$SHLVL}	&	shell nesting level on the current machine	\\
@@ -129,7 +131,7 @@
 
 \section{Conditions}
 \mytable{gX}{
-	\specialcell{\code{if \textit{expression}; then} \\ \code{  \textit{do something}} \\ \code{else} \\ \code{  \textit{do something else}}\\ \code{fi}}	&	typical if statement. Expressions can be commands and functions (return 0 $\rightarrow$ true) or builtin conditionals, see below	\\
+	\important{\specialcell{\code{if \textit{expression}; then} \\ \code{  \textit{do something}} \\ \code{else} \\ \code{  \textit{do something else}}\\ \code{fi}}}	&	typical if statement. Expressions can be commands and functions (return 0 $\rightarrow$ true) or built-in conditional expressions, see below	\\
 	\code{\textit{expression} \&\& \cmd{}}	&	run \cmd{} if \textit{expression} is true	\\
 	\code{\textit{expression} || \cmd{}}	&	run \cmd{} if \textit{expression} is false	\\
 }
@@ -160,170 +162,45 @@
 	\multicolumn{2}{|i|}{\code{for i in \{0..9\}; do echo \$i; done}}	\\
 	\multicolumn{2}{|g|}{\code{i=0; while (( num < 10 )); do echo \$i; let i++; done}}	\\
 	\multicolumn{2}{|c|}{iterate over every line in \$var:}	\\
-	\multicolumn{2}{|g|}{\code{IFS=\$'\textbackslash r\textbackslash n'; for line in \`\$var\`; do echo \$line; done}}	\\
+	\multicolumn{2}{|g|}{\code{IFS=\$'\textbackslash r\textbackslash n'; for line in \$var; do echo \$line; done}}	\\
 }
 
-\section{Repository Initialization}
+\section{Parallel Workers}
 \mytable{gX}{
-	\code{git init} \dir	&	create \dir{} as a git repository	\\
-	\code{git init}	&	convert the current directory to a git repository	\\
-	\code{git clone} \url{}	&	clone a remote repository into a new directory	\\
-	\myopt{--bare}	&	\myoptd{without working copy}	\\
-	\myopt{--depth} \textit{num}	&	\myoptd{shallow clone: omits older commits}	\\
+	\specialcell{
+		\code{num=100}	\\
+		\code{next()\{}	\\
+		\code{  (( num > 0 )) \&\& let num-- || return}	\\
+		\code{  \cmd{}\&}	\\
+		\code{\}}	\\
+		\code{set -o monitor}	\\
+		\code{trap next CHLD}	\\
+		\code{for i in `grep proc /proc/cpuinfo`;do}	\\
+		\code{  next}	\\
+		\code{done}
+		\code{wait}	\\
+		\code{trap - CHLD}	\\
+	}	&	Run \cmd{} 100 times in parallel, one process per cpu core	\\
 }
 
-\section{Workflow Examples}
-\mytable{iX}{
-	\sct{
-		\code{cd} \dir{}\\
-		\code{git init}\\
-		\code{git add .}\\
-		\code{git commit -m 'initial commit'}\\
-	}	&	
-	setup of a new repository
-	\\\hline
-	\sct{
-		(file editing)\\
-		\code{git add }\file{}\\
-		\code{git commit -m 'feature }\textit{asd} \code{implemented'}\\
-	}	&
-	usual workflow
-	\\\hline
-	\sct{
-		\code{git checkout master}\\
-		\code{git merge --no-ff feature-}\textit{asd}\\
-		\code{git branch -d feature-}\textit{asd}\\
-		\code{git push origin master}\\
-	}	&
-	update of the master branch with changes from a feature branch before deleting it
-	\\
-}
-
-\section{Managing Local Changes}
+\section{I/O Processing}
 \mytable{gX}{
-	\important{\code{git status}}	&	show changed files since last commit	\\
-	\code{git status} \dir{}\textbar\file{}	&	show status of a subset of files	\\
-	\code{git diff}	&	show all changed lines since last commit	\\
-	\code{git diff} \file{}	&	show \code{diff} for \file{} only	\\
-	\code{git diff} \file{} \commit{}	&	show changes since \commit{}	\\
-	\code{git add} \dir{}\textbar\file{}	&	stage \dir{} or \file{} for the next commit	\\
-	\code{git add -u}	&	stage all tracked files	\\
-	\code{git add --all}	&	stage all existing files, including new files	\\
-	\code{git add -A}	&	alias for \code{git add --all}	\\
-	\code{git add -i}	&	interactive staging	\\
-	\code{git stage}	&	alias for \code{git add}	\\
-	\code{git rm} \file{}	&	delete \file{} and stage its deletion	\\
-	\code{git mv} \textit{file... \textit{target}}	&	move and stage one or more files	\\
-	\code{git commit}	&	bundle staged changes int a new \commit{}	\\
-	\myopt{-m '}\textit{commit message}\myoptc{'}	&	\myoptd{pass the commit message in-line}	\\
-	\attention{\myopt{--amend}}	&	\myoptd{add changes to last commit}	\\
+	\important{\code{echo \$@}}	&	process all arguments at once	\\
+	\specialcell{
+		\code{while true; do}	\\
+		\code{  echo "\$1"}	\\
+		\code{  shift || break}	\\
+		\code{done}	\\
+	}	&	print every single argument on its own. To be used in a script or a function.	\\
+	\important{\code{ls | xargs}}	&	merge all output lines	\\
+	\important{\code{echo "foo bar" | xargs -n1}}	&	split to one word per line	\\
+	\important{\code{echo "foo bar" | xargs -n1 \cmd{}}}	&	run \cmd{} on every single word	\\
+	\code{read myvar}	&	read a line from stdin into \$myvar	\\
 }
 
-\section{Managing Local Branches}
+\section{Bash invocation}
 \mytable{gX}{
-	\code{git branch}	&	show current branch	\\
-	\code{git branch -a}	&	show all branches	\\
-	\code{git checkout} \branch{}	&	move to \branch{}	\\
-	\code{git branch} \branch{}	&	create a new branch at the current commit	\\
-	\code{git checkout -b} \branch{}	&	create a new branch and move to it	\\
-	\code{git merge} \branch{}	&	merge changes from another branch	\\
-	\myopt{--no-ff}	&	\myoptd{force a new commit (cleaner merge history)}	\\
-	\myopt{--ff-only}	&	\myoptd{don't merge if both branches were changed}	\\
-	\code{git mergetool}	&	starts a program to help with merge conflicts	\\
-	\code{git branch -d} \branch{}	&	delete a merged local branch	\\
-	\attention{\code{git branch -D}	\branch{}}	&	force deletion of a local branch	\\
-}
-
-\section{Stashes}
-\mytable{gX}{
-	\code{git stash save}	&	detach all changes since the last commit to a stash	\\
-	\code{git stash list}	&	list all stashes	\\
-	\code{git stash show}	&	show which files were changed	\\
-	\code{git stash pop}	&	remove and apply a stash (e.g. to a different branch)	\\
-}
-
-\section{Remote Repositories}
-\mytable{gX}{
-	\code{git clone} \url{}	&	automatically creates the remote \code{origin}	\\
-	\code{git remote -v}	&	show all remotes and addresses	\\
-	\code{git remote add} \remote{} \url{}	&	add a new remote	\\
-	\code{git remote rm} \remote{}	&	remove a remote	\\
-	\code{git fetch} \remote{}	&	download all \remote{} branches w/o \code{merge}	\\
-	\code{git fetch --all}	&	\code{fetch} from all remotes	\\
-	\code{git pull} \remote{} \branch{}	&	\code{fetch} and \code{merge} a remote branch	\\
-	\myopt{--ff-only}	&	\myoptd{Only merge if there's no file conflict}	\\
-	\code{git push} \remote{} \branch{}	&	upload local commits to \remote{}	\\
-	\attention{\code{git push} \remote{} \code{:}\branch{}}	&	delete \branch{} on \remote{}	\\
-	\code{git remote prune} \remote{}	&	delete invalid refs to remote branches \\
-}
-
-\section{Upstreams}
-
-\mytable{gX}{
-	\code{git push -u} \remote{} \branch{}	&	set upstream and push to \remote{} \branch{}	\\
-	\code{git pull}	&	\code{pull} current branch from upstream	\\
-	\code{git push}	&	\code{push} current branch to upstream	\\
-	\code{git push --all}	&	\code{push} all branches to their upstream	\\
-	\multicolumn{2}{|g|}{\code{git branch --set-upstream-to=}\remote{}\code{/}\branch{}}\\
-		&	set upstream of the current branch	\\
-}
-
-\section{Managing Tags}
-\mytable{gX}{
-	\code{git tag -a }\tag{} \commit{}\textbar\branch{}	&	create a tag at \commit{} or \branch{}	\\
-	\myopt{-m '}\textit{tag message}\code{'}	&	\myoptd{pass the tag message in-line}	\\
-	\code{git tag -d }\tag{}	&	delete \tag{} locally	\\
-	\code{git push --tags}	&	push all tags	\\
-	\code{git push} \remote{} \code{:refs/tags/}\tag{}	&	delete a remote tag	\\
-}
-
-\section{Searching for Files}
-\mytable{gX}{
-	\code{git grep '}\textit{pattern}\code{'}	&	search all tracked files for \textit{pattern}	\\
-	\code{git ls-files}	&	list tracked files	\\
-	\myopt{-d}	&	\myoptd{list deleted files}	\\
-	\myopt{-m}	&	\myoptd{list modified files}	\\
-	\myopt{-u}	&	\myoptd{on merge conflict, list unmerged files}	\\
-	\myopt{--other --exclude-standard}	&	\myoptd{list untracked files} \\
-	\code{git clean -ndx}	&	list untracked and ignored files	\\
-	\code{git clean -ndX}	&	list ignored files	\\
-}
-
-\section{Working Directory Cleanup}
-\mytable{gX}{
-	\code{git clean -f}	&	delete untracked files	\\
-	\code{git clean -fd}	&	delete untracked files and directories	\\
-	\code{git clean -fdX}	&	delete ignored files only	\\
-	\code{git clean -fdx}	&	delete untracked and ignored files	\\
-	\multicolumn{2}{|g|}{\code{git archive --prefix=}\textit{project}\code{/ -o }\textit{project}\code{.tar.gz} \branch{}}	\\
-	&	create a tar.gz archive of all tracked files	\\
-}
-
-\section{Commit History}
-\mytable{gX}{
-	\code{git log}	&	show local commit history	\\
-	\myopt{--oneline}	&	\myoptd{one line per commit}	\\
-	\myopt{--decorate}	&	\myoptd{show tags and branch names}	\\
-	\myopt{--merges}	&	\myoptd{show merge commits only}	\\
-	\code{git graph}	&	graphical commit history. See \textbf{Global Setup}	\\
-	\code{git ls-tree -r HEAD}	&	show modification commit for each file	\\
-	\code{git show \commit{}}	&	\code{diff} of the given \commit{} to its parent	\\
-	\code{git blame} \file{}	&	show the modification commit for each line \\
-	\multicolumn{2}{|g|}{\code{git log --pretty=format: --name-only --diff-filter=A | sort -u}}	\\
-  &	list all files ever commited	\\
-}
-
-\section{Undo Bad Things \texttrademark}
-\mytable{gX}{
-	\attention{\code{git reset HEAD \file{}}}	&	undo \code{git add} of a single file	\\
-	\attention{\code{git reset --hard}}	&	undo everything since last commit	\\
-	\attention{\code{git checkout --} \file{}}	&	undo \file{} changes since last commit	\\
-	\attention{\sct{\code{git rebase} \\ \myopt{--onto} \branch{} \commit{}}}	&	undo \code{git branch} by moving commits on top of the old branch	\\
-	\attention{\code{git push} \remote{} \commit{}:\branch{}}	&	revert remote branch to \commit{}	\\
-	\attention{\code{rm -rfv} \repo{}\code{/.git*}}	&	undo \code{git init}	\\
-	\multicolumn{2}{|a|}{\code{git filter-branch --force --index-filter 'git rm --cached}}	\\
-	\multicolumn{2}{|a|}{\code{--ignore-unmatch} \file{}\code{' --prune-empty --tag-name-filter cat -- --all}}	\\
-	\multicolumn{2}{|r|}{Delete any copy or reference of a file on the current branch}	\\
+	\code{bash -c "\cmd{}"}	&	run \cmd{} in a fresh bash instance	\\
 }
 
 \section{Further Reading}
