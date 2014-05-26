@@ -118,8 +118,12 @@
 	\important{\code{\cmd{} \&}}	&	Send \cmd{} to background, return to command line	\\
 	\code{wait}	&	wait for forked processes to finish	\\
 	\code{( \cmd{} \& );exit}	&	fork a command within a one-liner (example)x	\\
+	\code{jobs}	&	show all child processes	\\
+	\myopt{-r}	&	\myoptd{show only running processes}	\\
+	\myopt{-p}	&	\myoptd{show \pid{}s only}	\\
 	\attention{\code{killall \cmd{}}}	&	stop all processes with the name \cmd{}	\\
 	\attention{\code{kill \pid{}}}	&	ask a process to stop	\\
+	\attention{\code{kill `jobs -rp`}}	&	kill all child processes	\\
 	\attention{\code{kill -KILL \pid{}}}	&	forcefully stop a process	\\
 }
 
@@ -171,7 +175,7 @@
 \mytable{gX}{
 	\important{\specialcell{\code{for word in \$words; do}\\ \code{ echo \$word}\\ \code{done}}}	&	print every word in \$words\\
 	\specialcell{\code{while \textit{expression}; do}\\\code{  \textit{do something}}\\\code{done}}	&	traditional while loop	\\
-	\multicolumn{2}{|l|}{Some ways of iterating over an integer range:}	\\
+	\multicolumn{2}{|l|}{different methods of iterating over an integer range:}	\\
 	\multicolumn{2}{|i|}{\code{for i in \{0..9\}; do echo \$i; done}}	\\
 	\multicolumn{2}{|g|}{\code{for i in `seq \$start \$num \$step`; do echo \$i; done}}	\\
 	\multicolumn{2}{|a|}{\code{i=0; while (( num < 10 )); do echo \$i; let i++; done}}	\\
