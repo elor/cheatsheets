@@ -9,12 +9,19 @@
 	\large{\reflectbox{\textcopyright} Erik E. Lorenz, \today}
 \end{center}
 
+\section{Cheat Sheet Color Coding}
+\mytable{gX}{
+	\important{\code{cmd}}	&	Most frequent commands	\\
+	\code{cmd}	&	Usually not harmful	\\
+	\attention{\code{cmd}}	&	deletes data, requires root or is just bad programming	\\
+}
+
 \section{Internal Files and Directories}
 \mytable{gX}{
-	\code{$\sim$/.bashrc}	&	user-specific global functions and aliases	\\
-	\code{$\sim$/.bash\_profile}	&	similar to \code{$\sim$/.bashrc} \\
+	\important{\code{$\sim$/.bashrc}}	&	user-specific global functions and aliases	\\
+	\attention{\code{$\sim$/.bash\_profile}}	&	similar to \code{$\sim$/.bashrc} \\
 	\code{$\sim$/.bash\_history}	&	list of previous bash commands \\
-	\code{$\sim$/.bash\_logout}	&	runs on bash logout	\\
+	\attention{\code{$\sim$/.bash\_logout}}	&	runs on bash logout	\\
 	\code{/bin/bash}	&	location of the \code{bash} executable	\\
 }
 
@@ -63,13 +70,6 @@
 	\code{!\^}	&	first arguments of the previous command	\\
 	\code{!:1, !:2, ...}	&	arguments of the last command	\\
 	\code{!:1-}	&	all arguments of the last command	\\
-}
-
-\section{Cheat Sheet Color Coding}
-\mytable{gX}{
-	\important{\code{cmd}}	&	Most frequent commands	\\
-	\code{cmd}	&	Usually not harmful	\\
-	\attention{\code{cmd}}	&	deletes data, requires root or bad programming	\\
 }
 
 \section{Debugging}
@@ -171,30 +171,25 @@
 \mytable{gX}{
 	\important{\specialcell{\code{for word in \$words; do}\\ \code{ echo \$word}\\ \code{done}}}	&	print every word in \$words\\
 	\specialcell{\code{while \textit{expression}; do}\\\code{  \textit{do something}}\\\code{done}}	&	traditional while loop	\\
-	\multicolumn{2}{|c|}{Some ways of iterating over integers}	\\
+	\multicolumn{2}{|l|}{Some ways of iterating over an integer range:}	\\
 	\multicolumn{2}{|i|}{\code{for i in \{0..9\}; do echo \$i; done}}	\\
 	\multicolumn{2}{|g|}{\code{for i in `seq \$start \$num \$step`; do echo \$i; done}}	\\
 	\multicolumn{2}{|a|}{\code{i=0; while (( num < 10 )); do echo \$i; let i++; done}}	\\
-	\multicolumn{2}{|c|}{iterate over every line in \$var:}	\\
+	\multicolumn{2}{|l|}{Iterate over every line in \$var:}	\\
 	\multicolumn{2}{|g|}{\code{IFS=\$'\textbackslash r\textbackslash n' ; for line in \$var; do echo \$line; done}}	\\
 }
 
 \section{Parallel Workers}
 \mytable{gX}{
 	\specialcell{
-		\code{num=100}	\\
-		\code{next()\{}	\\
-		\code{  (( num > 0 )) \&\& let num-- || return}	\\
-		\code{  \cmd{}\&}	\\
-		\code{\}}	\\
-		\code{set -o monitor}	\\
-		\code{trap next CHLD}	\\
-		\code{for i in `grep proc /proc/cpuinfo`;do}	\\
-		\code{  next}	\\
-		\code{done}	\\
-		\code{wait}	\\
-		\code{trap - CHLD}	\\
-	}	&	Run \cmd{} 100 times in a parallel queue, one process per cpu core	\\
+	\code{num=100}	\\
+	\code{ncpus=`grep proc /proc/cpuinfo|wc -l`}	\\
+	\code{for i in `seq 1 \$num`; do}	\\
+	\code{  \cmd{} \&}	\\
+	\code{  (( \$ncpus > `jobs -r|wc -l` )) || wait -n}	\\
+	\code{done}	\\
+	\code{wait}	\\
+	}	&	Run \cmd{} 100 times in a parallel queue, one process per cpu core.	\\
 }
 
 \section{I/O Processing}
