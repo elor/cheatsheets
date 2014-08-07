@@ -1,2 +1,3 @@
 git rev-parse --show-toplevel
 git rev-parse --abbrev-ref HEAD
+git merge -X theirs release-1.1

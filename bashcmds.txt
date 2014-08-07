@@ -1,0 +1,1 @@
+dd if=Downloads/2014-06-20-wheezy-raspbian.img bs=1024k | pv --size `du -b Downloads/2014-06-20-wheezy-raspbian.img  | cut -f 1` | sudo dd of=/dev/sde bs=1024k
