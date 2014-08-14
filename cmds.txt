@@ -46,6 +46,7 @@ setxkbmap de
 sleep 1
 usleep 1000000
 du -ah
+# NOTE: du does not add hard- nor softlinks within the same query!
 df
 free
 df
